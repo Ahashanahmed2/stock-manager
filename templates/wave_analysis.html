@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Elliott Wave Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        .wave-level {
+            border-left: 4px solid #007bff;
+            padding-left: 15px;
+            margin-bottom: 10px;
+        }
+        .wave-level.grand { border-left-color: #ff0000; }
+        .wave-level.super { border-left-color: #ff6600; }
+        .wave-level.cycle { border-left-color: #ffcc00; }
+        .wave-level.primary { border-left-color: #00ff00; }
+        .wave-level.intermediate { border-left-color: #0099ff; }
+        .wave-level.minor { border-left-color: #6600ff; }
+        .wave-level.minute { border-left-color: #cc00ff; }
+        
+        .tooltip-icon {
+            cursor: help;
+            color: #007bff;
+        }
+        
+        .pattern-example {
+            background: #f8f9fa;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-3">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 rounded">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">📊 Advanced Elliott Wave Analyzer</a>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/">Stocks</a>
+                    <a class="nav-link active" href="/wave-analysis">Wave Analysis</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="row">
+            <!-- Left Side: Analysis Form -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5>🎯 New Wave Analysis</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="advancedWaveForm">
+                            <!-- Basic Info -->
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Symbol *</label>
+                                    <input type="text" class="form-control" name="symbol" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Analysis Date *</label>
+                                    <input type="date" class="form-control" name="analysis_date" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Confidence Level</label>
+                                    <select class="form-control" name="confidence_level">
+                                        <option value="high">🟢 High</option>
+                                        <option value="medium" selected>🟡 Medium</option>
+                                        <option value="low">🔴 Low</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Grand Supercycle Level -->
+                            <div class="wave-level grand mb-3">
+                                <h6 class="text-danger">Grand Supercycle (I-II-III-IV-V)</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <select class="form-control form-control-sm" name="grand_supercycle_wave">
+                                            <option value="unknown">❓ Unknown</option>
+                                            <option value="I">Wave I</option>
+                                            <option value="II">Wave II</option>
+                                            <option value="III">Wave III</option>
+                                            <option value="IV">Wave IV</option>
+                                            <option value="V">Wave V</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select class="form-control form-control-sm" name="grand_supercycle_position">
+                                            <option value="unknown">❓ Position Unknown</option>
+                                            <option value="beginning">Wave Beginning</option>
+                                            <option value="middle">Wave Middle</option>
+                                            <option value="ending">Wave Ending</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Primary Level (Most Important) -->
+                            <div class="wave-level primary mb-3">
+                                <h6 class="text-success">Primary Wave (1-2-3-4-5) *</h6>
+                                <div class="row mb-2">
+                                    <div class="col-md-3">
+                                        <select class="form-control form-control-sm" name="primary_wave" id="primaryWave" required>
+                                            <option value="">Select Wave</option>
+                                            <option value="unknown">❓ Unknown</option>
+                                            <option value="1">Wave 1</option>
+                                            <option value="2">Wave 2</option>
+                                            <option value="3">Wave 3</option>
+                                            <option value="4">Wave 4</option>
+                                            <option value="5">Wave 5</option>
+                                            <option value="A">Wave A</option>
+                                            <option value="B">Wave B</option>
+                                            <option value="C">Wave C</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-control form-control-sm" name="primary_wave_type" id="primaryWaveType">
+                                            <option value="unknown">❓ Unknown Type</option>
+                                            <optgroup label="Motive Waves">
+                                                <option value="impulse">Impulse (5-3-5-3-5)</option>
+                                                <option value="leading_diagonal">Leading Diagonal (5-3-5-3-5)</option>
+                                                <option value="ending_diagonal">Ending Diagonal (3-3-3-3-3)</option>
+                                            </optgroup>
+                                            <optgroup label="Corrective Waves">
+                                                <option value="zigzag">Zigzag (5-3-5)</option>
+                                                <option value="flat">Flat (3-3-5)</option>
+                                                <option value="irregular_flat">Irregular Flat</option>
+                                                <option value="running_flat">Running Flat</option>
+                                                <option value="triangle">Triangle (3-3-3-3-3)</option>
+                                                <option value="contracting_triangle">Contracting Triangle</option>
+                                                <option value="expanding_triangle">Expanding Triangle</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-control form-control-sm" name="primary_pattern" id="primaryPattern">
+                                            <option value="unknown">❓ Pattern Unknown</option>
+                                            <option value="5-3-5-3-5">5-3-5-3-5 (Full Impulse)</option>
+                                            <option value="5-3-5">5-3-5 (Zigzag)</option>
+                                            <option value="3-3-5">3-3-5 (Flat)</option>
+                                            <option value="3-3-3-3-3">3-3-3-3-3 (Triangle)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-control form-control-sm" name="wave_position">
+                                            <option value="unknown">❓ Position</option>
+                                            <option value="starting">Starting of Wave</option>
+                                            <option value="middle">Middle of Wave</option>
+                                            <option value="ending">Ending of Wave</option>
+                                            <option value="subwave_a">Sub-wave a</option>
+                                            <option value="subwave_b">Sub-wave b</option>
+                                            <option value="subwave_c">Sub-wave c</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Sub-wave details -->
+                                <div class="row" id="subwaveDetails">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Sub-wave Pattern</label>
+                                        <select class="form-control form-control-sm" name="primary_subwave" id="primarySubwave">
+                                            <option value="unknown">❓ Unknown</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Sub-wave Detail</label>
+                                        <select class="form-control form-control-sm" name="primary_subwave_detail" id="subwaveDetail">
+                                            <option value="unknown">❓ Unknown</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Wave Position Within</label>
+                                        <select class="form-control form-control-sm" name="intermediate_wave">
+                                            <option value="unknown">❓ Unknown</option>
+                                            <option value="i">Minor i</option>
+                                            <option value="ii">Minor ii</option>
+                                            <option value="iii">Minor iii</option>
+                                            <option value="iv">Minor iv</option>
+                                            <option value="v">Minor v</option>
+                                            <option value="a">Minor a</option>
+                                            <option value="b">Minor b</option>
+                                            <option value="c">Minor c</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Trading Details -->
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label class="form-label">Entry Price</label>
+                                    <input type="number" step="0.01" class="form-control" name="entry_price">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Target Price</label>
+                                    <input type="number" step="0.01" class="form-control" name="target_price">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Stop Loss</label>
+                                    <input type="number" step="0.01" class="form-control" name="stop_loss">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Fibonacci Level</label>
+                                    <input type="text" class="form-control" name="fibonacci_level" placeholder="e.g., 0.618">
+                                </div>
+                            </div>
+
+                            <!-- Expected Outcome -->
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Expected Completion Date</label>
+                                    <input type="date" class="form-control" name="expected_completion_date">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Expected Price Target</label>
+                                    <input type="number" step="0.01" class="form-control" name="expected_price_target">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Trend Direction</label>
+                                    <select class="form-control" name="trend_direction">
+                                        <option value="unknown">❓ Unknown</option>
+                                        <option value="bullish">🟢 Bullish</option>
+                                        <option value="bearish">🔴 Bearish</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="mb-3">
+                                <label class="form-label">Analysis Notes</label>
+                                <textarea class="form-control" name="notes" rows="4" placeholder="Your detailed wave analysis, observations, key levels..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                💾 Save Wave Analysis
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Pattern Guide -->
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-header bg-info text-white">
+                        <h6>📖 Wave Pattern Guide</h6>
+                    </div>
+                    <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+                        <div class="pattern-example">
+                            <strong>Impulse Waves (1,3,5):</strong><br>
+                            • Pattern: 5-3-5-3-5<br>
+                            • Wave 1: Starting of trend<br>
+                            • Wave 3: Strongest, often extends<br>
+                            • Wave 5: Final push
+                        </div>
+                        
+                        <div class="pattern-example">
+                            <strong>Terminal/Diagonal:</strong><br>
+                            • Leading Diagonal: 5-3-5-3-5<br>
+                              - Occurs in Wave 1 or A<br>
+                            • Ending Diagonal: 3-3-3-3-3<br>
+                              - Occurs in Wave 5 or C<br>
+                            • Key: Wedge shape, overlapping
+                        </div>
+                        
+                        <div class="pattern-example">
+                            <strong>Corrective Waves:</strong><br>
+                            • Zigzag (5-3-5): Sharp<br>
+                              - Wave A: 5 waves<br>
+                              - Wave B: 3 waves (can be any pattern)<br>
+                              - Wave C: 5 waves<br>
+                            • Flat (3-3-5): Sideways<br>
+                              - Wave A: 3 waves<br>
+                              - Wave B: 3 waves (often >100% of A)<br>
+                              - Wave C: 5 waves
+                        </div>
+                        
+                        <div class="pattern-example">
+                            <strong>Sub-wave B Structure:</strong><br>
+                            • In Zigzag: B is always corrective<br>
+                              - Can be zigzag, flat, or triangle<br>
+                            • In Flat: B often strongest<br>
+                              - Can retrace >100% of A<br>
+                            • Always 3 waves structure
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accuracy Tracker -->
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h6>📊 Your Analysis Accuracy</h6>
+                    </div>
+                    <div class="card-body" id="accuracyTracker">
+                        <p>Loading statistics...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Set today's date
+        document.querySelector('[name="analysis_date"]').value = new Date().toISOString().split('T')[0];
+
+        // Dynamic sub-wave options based on primary wave and type
+        const primaryWave = document.getElementById('primaryWave');
+        const primaryWaveType = document.getElementById('primaryWaveType');
+        const primarySubwave = document.getElementById('primarySubwave');
+        const subwaveDetail = document.getElementById('subwaveDetail');
+
+        function updateSubwaveOptions() {
+            const wave = primaryWave.value;
+            const type = primaryWaveType.value;
+            
+            // Reset sub-wave options
+            primarySubwave.innerHTML = '<option value="unknown">❓ Unknown</option>';
+            subwaveDetail.innerHTML = '<option value="unknown">❓ Unknown</option>';
+            
+            if (wave === '1' || wave === '3' || wave === '5') {
+                // Impulse or Diagonal waves
+                if (type === 'ending_diagonal') {
+                    // Ending Diagonal: 3-3-3-3-3
+                    primarySubwave.innerHTML += `
+                        <option value="3-3-3-3-3">3-3-3-3-3 (Ending Diagonal)</option>
+                        <option value="3">Current sub-wave 3 of diagonal</option>
+                    `;
+                    subwaveDetail.innerHTML += `
+                        <option value="wave_1_of_3">Wave 1 of 3</option>
+                        <option value="wave_2_of_3">Wave 2 of 3</option>
+                        <option value="wave_3_of_3">Wave 3 of 3</option>
+                    `;
+                } else if (type === 'leading_diagonal') {
+                    // Leading Diagonal: 5-3-5-3-5
+                    primarySubwave.innerHTML += `
+                        <option value="5-3-5-3-5">5-3-5-3-5 (Leading Diagonal)</option>
+                        <option value="5">Current 5-wave structure</option>
+                    `;
+                } else {
+                    // Regular Impulse: 5-3-5-3-5
+                    primarySubwave.innerHTML += `
+                        <option value="5-3-5-3-5">5-3-5-3-5 (Full Impulse)</option>
+                        <option value="wave_1_of_5">Wave 1 of 5</option>
+                        <option value="wave_3_of_5">Wave 3 of 5 (Strongest)</option>
+                        <option value="wave_5_of_5">Wave 5 of 5</option>
+                    `;
+                    
+                    subwaveDetail.innerHTML += `
+                        <option value="minute_i">Minute wave i</option>
+                        <option value="minute_ii">Minute wave ii</option>
+                        <option value="minute_iii">Minute wave iii</option>
+                        <option value="minute_iv">Minute wave iv</option>
+                        <option value="minute_v">Minute wave v</option>
+                    `;
+                }
+            } else if (wave === '2' || wave === '4' || wave === 'B') {
+                // Corrective waves
+                if (type.includes('zigzag')) {
+                    // Zigzag: 5-3-5
+                    primarySubwave.innerHTML += `
+                        <option value="5-3-5">5-3-5 (Zigzag ABC)</option>
+                        <option value="subwave_a_of_zigzag">Sub-wave A (5 waves)</option>
+                        <option value="subwave_b_of_zigzag">Sub-wave B (3 waves)</option>
+                        <option value="subwave_c_of_zigzag">Sub-wave C (5 waves)</option>
+                    `;
+                    
+                    // If B wave is selected
+                    subwaveDetail.innerHTML += `
+                        <option value="b_wave_zigzag">B wave of Zigzag</option>
+                        <option value="b_wave_flat">B wave as Flat (3-3-5)</option>
+                        <option value="b_wave_triangle">B wave as Triangle</option>
+                        <option value="b_wave_zigzag_of_zigzag">B wave as Zigzag (5-3-5)</option>
+                    `;
+                } else if (type.includes('flat')) {
+                    // Flat: 3-3-5
+                    primarySubwave.innerHTML += `
+                        <option value="3-3-5">3-3-5 (Flat ABC)</option>
+                        <option value="subwave_a_of_flat">Sub-wave A (3 waves)</option>
+                        <option value="subwave_b_of_flat">Sub-wave B (3 waves)</option>
+                        <option value="subwave_c_of_flat">Sub-wave C (5 waves)</option>
+                    `;
+                    
+                    subwaveDetail.innerHTML += `
+                        <option value="b_of_3_in_flat">B of 3 in Flat</option>
+                        <option value="c_of_3_in_flat">C of 3 in Flat</option>
+                    `;
+                }
+            }
+        }
+
+        primaryWave.addEventListener('change', updateSubwaveOptions);
+        primaryWaveType.addEventListener('change', updateSubwaveOptions);
+
+        // Form submission
+        document.getElementById('advancedWaveForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('/api/advanced-wave-analysis', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Wave analysis saved! You can verify its accuracy later.');
+                    e.target.reset();
+                    document.querySelector('[name="analysis_date"]').value = new Date().toISOString().split('T')[0];
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // Load accuracy statistics
+        async function loadAccuracyStats() {
+            try {
+                const response = await fetch('/api/analysis-statistics');
+                const data = await response.json();
+                
+                document.getElementById('accuracyTracker').innerHTML = `
+                    <p><strong>Total Analyses:</strong> ${data.total_analyses}</p>
+                    <p><strong>Verified:</strong> ${data.verified_analyses}</p>
+                    <p><strong>Correct:</strong> ${data.correct_analyses}</p>
+                    <p><strong>Accuracy Rate:</strong> ${data.accuracy_rate.toFixed(1)}%</p>
+                    <div class="progress">
+                        <div class="progress-bar" style="width: ${data.accuracy_rate}%">
+                            ${data.accuracy_rate.toFixed(1)}%
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        loadAccuracyStats();
+    </script>
+</body>
+</html>
