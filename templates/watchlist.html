@@ -1,0 +1,236 @@
+// watchlist.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watchlist - Stock Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="container-fluid mt-3">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 rounded">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Stock Manager</a>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/">Stocks</a>
+                    <a class="nav-link active" href="/watchlist">Watchlist</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="row">
+            <!-- Add to Watchlist -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5>Add to Watchlist</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="watchlistForm">
+                            <div class="mb-3">
+                                <label class="form-label">Symbol</label>
+                                <input type="text" class="form-control" name="symbol" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Date</label>
+                                <input type="date" class="form-control" name="date" id="watchlistDate">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Watchlist -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Watchlist</h5>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="date" class="form-control" id="filterDate" placeholder="Filter by date">
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="searchSymbol" placeholder="Search symbol...">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Date</th>
+                                        <th>Symbol</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="watchlistTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editWatchlistModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Watchlist Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editWatchlistForm">
+                        <input type="hidden" id="editId">
+                        <div class="mb-3">
+                            <label class="form-label">Symbol</label>
+                            <input type="text" class="form-control" id="editSymbol" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Set today's date as default
+        document.getElementById('watchlistDate').value = new Date().toISOString().split('T')[0];
+
+        // Add to Watchlist
+        document.getElementById('watchlistForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('/api/watchlist', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Added to watchlist!');
+                    e.target.reset();
+                    document.getElementById('watchlistDate').value = new Date().toISOString().split('T')[0];
+                    loadWatchlist();
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // Filter and Search
+        document.getElementById('filterDate').addEventListener('change', loadWatchlist);
+        document.getElementById('searchSymbol').addEventListener('input', loadWatchlist);
+
+        // Load Watchlist
+        async function loadWatchlist() {
+            const date = document.getElementById('filterDate').value;
+            const search = document.getElementById('searchSymbol').value;
+            
+            let url = '/api/watchlist?';
+            if (date) url += `date=${date}&`;
+            if (search) url += `search=${search}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                const tbody = document.getElementById('watchlistTableBody');
+                tbody.innerHTML = '';
+                
+                data.watchlist.forEach((item, index) => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${new Date(item.date).toLocaleDateString()}</td>
+                        <td>${item.symbol}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editWatchlist('${item._id}')">
+                                <i class="bi bi-pencil"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteWatchlist('${item._id}')">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </td>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Edit Watchlist
+        async function editWatchlist(id) {
+            try {
+                const response = await fetch(`/api/watchlist`);
+                const data = await response.json();
+                const item = data.watchlist.find(w => w._id === id);
+                
+                if (item) {
+                    document.getElementById('editId').value = item._id;
+                    document.getElementById('editSymbol').value = item.symbol;
+                    new bootstrap.Modal(document.getElementById('editWatchlistModal')).show();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Edit Watchlist Form
+        document.getElementById('editWatchlistForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editId').value;
+            const formData = new FormData();
+            formData.append('symbol', document.getElementById('editSymbol').value);
+            
+            try {
+                const response = await fetch(`/api/watchlist/${id}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Watchlist updated!');
+                    bootstrap.Modal.getInstance(document.getElementById('editWatchlistModal')).hide();
+                    loadWatchlist();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // Delete Watchlist
+        async function deleteWatchlist(id) {
+            if (confirm('Are you sure you want to remove from watchlist?')) {
+                try {
+                    const response = await fetch(`/api/watchlist/${id}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Removed from watchlist!');
+                        loadWatchlist();
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        }
+
+        loadWatchlist();
+    </script>
+</body>
+</html>
