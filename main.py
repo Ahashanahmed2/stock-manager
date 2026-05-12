@@ -1,31 +1,29 @@
 from fastapi import FastAPI, Request, Form, HTTPException
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
-from datetime import datetime, date
+from datetime import datetime
 import os
-from typing import Optional, List
-import json
+from typing import Optional
 
-app = FastAPI(title="Stock Manager with Elliott Wave")
+app = FastAPI(title="Advanced Elliott Wave Analyzer")
 
 # MongoDB Connection
 MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
 client = AsyncIOMotorClient(MONGODB_URL)
 db = client.stock_manager
+
+# Collections
 stocks_collection = db.stocks
-watchlist_collection = db.watchlist
 wave_analysis_collection = db.wave_analysis
+wave_history_collection = db.wave_history  # Track analysis accuracy over time
 
 # Templates
 templates = Jinja2Templates(directory="templates")
-
-# Static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Helper function to serialize MongoDB documents
 def serialize_doc(doc):
     if doc:
         doc["_id"] = str(doc["_id"])
@@ -35,195 +33,186 @@ def serialize_doc(doc):
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    """Main page with stock table"""
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/watchlist", response_class=HTMLResponse)
 async def watchlist_page(request: Request):
-    """Watchlist page with Elliott Wave analysis"""
     return templates.TemplateResponse("watchlist.html", {"request": request})
 
-# ==================== API ENDPOINTS ====================
+@app.get("/wave-analysis", response_class=HTMLResponse)
+async def wave_analysis_page(request: Request):
+    """New advanced Elliott Wave analysis page"""
+    return templates.TemplateResponse("wave_analysis.html", {"request": request})
 
 # Head API for UptimeRobot
 @app.head("/api/health")
 @app.get("/api/health")
 async def health_check():
-    """Health check endpoint for UptimeRobot"""
     return {"status": "ok", "timestamp": datetime.now().isoformat()}
 
-# Stock Data CRUD
-@app.post("/api/stocks")
-async def create_stock(
+# ==================== ADVANCED WAVE ANALYSIS API ====================
+
+@app.post("/api/advanced-wave-analysis")
+async def create_advanced_wave_analysis(
     symbol: str = Form(...),
-    buy_price: float = Form(...),
-    quantity: int = Form(...),
-    date: str = Form(default=None)
-):
-    """Add new stock entry"""
-    try:
-        stock_date = datetime.strptime(date, "%Y-%m-%d") if date else datetime.now()
-    except:
-        stock_date = datetime.now()
-    
-    stock_data = {
-        "symbol": symbol.upper(),
-        "buy_price": buy_price,
-        "quantity": quantity,
-        "date": stock_date,
-        "created_at": datetime.now()
-    }
-    
-    result = await stocks_collection.insert_one(stock_data)
-    
-    if result.inserted_id:
-        return JSONResponse({"success": True, "message": "Stock added successfully"})
-    raise HTTPException(status_code=400, detail="Failed to add stock")
-
-@app.get("/api/stocks")
-async def get_stocks(date: Optional[str] = None, search: Optional[str] = None):
-    """Get stocks with optional date filter or symbol search"""
-    query = {}
-    
-    if date:
-        try:
-            filter_date = datetime.strptime(date, "%Y-%m-%d")
-            start_date = filter_date.replace(hour=0, minute=0, second=0)
-            end_date = filter_date.replace(hour=23, minute=59, second=59)
-            query["date"] = {"$gte": start_date, "$lte": end_date}
-        except:
-            pass
-    
-    if search:
-        query["symbol"] = {"$regex": search.upper(), "$options": "i"}
-    
-    stocks = await stocks_collection.find(query).sort("date", -1).to_list(1000)
-    serialized_stocks = [serialize_doc(stock) for stock in stocks]
-    
-    return JSONResponse({"stocks": serialized_stocks})
-
-@app.get("/api/stocks/{stock_id}")
-async def get_stock(stock_id: str):
-    """Get single stock by ID"""
-    try:
-        stock = await stocks_collection.find_one({"_id": ObjectId(stock_id)})
-        if stock:
-            return JSONResponse({"stock": serialize_doc(stock)})
-        raise HTTPException(status_code=404, detail="Stock not found")
-    except:
-        raise HTTPException(status_code=400, detail="Invalid ID")
-
-@app.put("/api/stocks/{stock_id}")
-async def update_stock(
-    stock_id: str,
-    symbol: str = Form(...),
-    buy_price: float = Form(...),
-    quantity: int = Form(...),
-    date: str = Form(...)
-):
-    """Update stock entry"""
-    try:
-        stock_date = datetime.strptime(date, "%Y-%m-%d")
-    except:
-        raise HTTPException(status_code=400, detail="Invalid date format")
-    
-    update_data = {
-        "symbol": symbol.upper(),
-        "buy_price": buy_price,
-        "quantity": quantity,
-        "date": stock_date,
-        "updated_at": datetime.now()
-    }
-    
-    result = await stocks_collection.update_one(
-        {"_id": ObjectId(stock_id)},
-        {"$set": update_data}
-    )
-    
-    if result.modified_count:
-        return JSONResponse({"success": True, "message": "Stock updated"})
-    raise HTTPException(status_code=404, detail="Stock not found")
-
-@app.delete("/api/stocks/{stock_id}")
-async def delete_stock(stock_id: str):
-    """Delete single stock"""
-    try:
-        result = await stocks_collection.delete_one({"_id": ObjectId(stock_id)})
-        if result.deleted_count:
-            return JSONResponse({"success": True, "message": "Stock deleted"})
-        raise HTTPException(status_code=404, detail="Stock not found")
-    except:
-        raise HTTPException(status_code=400, detail="Invalid ID")
-
-@app.delete("/api/stocks/date/{date}")
-async def delete_stocks_by_date(date: str):
-    """Delete all stocks for a specific date"""
-    try:
-        filter_date = datetime.strptime(date, "%Y-%m-%d")
-        start_date = filter_date.replace(hour=0, minute=0, second=0)
-        end_date = filter_date.replace(hour=23, minute=59, second=59)
-        
-        result = await stocks_collection.delete_many({
-            "date": {"$gte": start_date, "$lte": end_date}
-        })
-        
-        return JSONResponse({
-            "success": True,
-            "message": f"Deleted {result.deleted_count} stocks from {date}"
-        })
-    except:
-        raise HTTPException(status_code=400, detail="Invalid date")
-
-# Elliott Wave Analysis CRUD
-@app.post("/api/wave-analysis")
-async def create_wave_analysis(
-    symbol: str = Form(...),
-    date: str = Form(...),
-    wave_number: str = Form(default="unknown"),
-    wave_type: str = Form(default="unknown"),
-    sub_wave: str = Form(default="unknown"),
-    notes: str = Form(default=""),
+    analysis_date: str = Form(...),
+    # Grand Supercycle Level
+    grand_supercycle_wave: str = Form(default="unknown"),
+    grand_supercycle_position: str = Form(default="unknown"),
+    # Supercycle Level
+    supercycle_wave: str = Form(default="unknown"),
+    supercycle_pattern: str = Form(default="unknown"),
+    # Cycle Level
+    cycle_wave: str = Form(default="unknown"),
+    cycle_pattern: str = Form(default="unknown"),
+    # Primary Level (Main analysis)
+    primary_wave: str = Form(...),
+    primary_wave_type: str = Form(default="unknown"),
+    primary_pattern: str = Form(default="unknown"),
+    primary_subwave: str = Form(default="unknown"),
+    primary_subwave_detail: str = Form(default="unknown"),
+    # Intermediate Level
+    intermediate_wave: str = Form(default="unknown"),
+    intermediate_pattern: str = Form(default="unknown"),
+    intermediate_subwave: str = Form(default="unknown"),
+    # Minor Level
+    minor_wave: str = Form(default="unknown"),
+    minor_pattern: str = Form(default="unknown"),
+    # Minute Level
+    minute_wave: str = Form(default="unknown"),
+    minute_pattern: str = Form(default="unknown"),
+    # Analysis Details
+    wave_position: str = Form(default="unknown"),  # starting, middle, ending
+    fibonacci_level: str = Form(default=""),
     trend_direction: str = Form(default="unknown"),
     confidence_level: str = Form(default="medium"),
     entry_price: float = Form(default=None),
     target_price: float = Form(default=None),
-    stop_loss: float = Form(default=None)
+    stop_loss: float = Form(default=None),
+    risk_reward_ratio: str = Form(default=""),
+    notes: str = Form(default=""),
+    chart_image_url: str = Form(default=""),
+    tags: str = Form(default=""),
+    # Analysis Accuracy Tracking
+    expected_completion_date: str = Form(default=""),
+    expected_price_target: float = Form(default=None),
+    is_verified: str = Form(default="pending")
 ):
-    """Add Elliott Wave analysis for a symbol"""
+    """Create advanced Elliott Wave analysis with full hierarchical structure"""
     try:
-        analysis_date = datetime.strptime(date, "%Y-%m-%d")
+        analysis_date_obj = datetime.strptime(analysis_date, "%Y-%m-%d")
     except:
         raise HTTPException(status_code=400, detail="Invalid date format")
     
+    expected_completion = None
+    if expected_completion_date:
+        try:
+            expected_completion = datetime.strptime(expected_completion_date, "%Y-%m-%d")
+        except:
+            pass
+    
     wave_data = {
+        # Symbol & Date
         "symbol": symbol.upper(),
-        "date": analysis_date,
-        "wave_number": wave_number,
-        "wave_type": wave_type,
-        "sub_wave": sub_wave,
-        "notes": notes,
+        "analysis_date": analysis_date_obj,
+        "created_at": datetime.now(),
+        "updated_at": datetime.now(),
+        
+        # Full Hierarchical Wave Structure
+        "grand_supercycle": {
+            "wave": grand_supercycle_wave,
+            "position": grand_supercycle_position
+        },
+        "supercycle": {
+            "wave": supercycle_wave,
+            "pattern": supercycle_pattern
+        },
+        "cycle": {
+            "wave": cycle_wave,
+            "pattern": cycle_pattern
+        },
+        "primary": {
+            "wave": primary_wave,
+            "type": primary_wave_type,
+            "pattern": primary_pattern,
+            "subwave": primary_subwave,
+            "subwave_detail": primary_subwave_detail
+        },
+        "intermediate": {
+            "wave": intermediate_wave,
+            "pattern": intermediate_pattern,
+            "subwave": intermediate_subwave
+        },
+        "minor": {
+            "wave": minor_wave,
+            "pattern": minor_pattern
+        },
+        "minute": {
+            "wave": minute_wave,
+            "pattern": minute_pattern
+        },
+        
+        # Analysis Details
+        "wave_position": wave_position,
+        "fibonacci_level": fibonacci_level,
         "trend_direction": trend_direction,
         "confidence_level": confidence_level,
+        
+        # Trading Details
         "entry_price": entry_price,
         "target_price": target_price,
         "stop_loss": stop_loss,
-        "created_at": datetime.now(),
-        "updated_at": datetime.now()
+        "risk_reward_ratio": risk_reward_ratio,
+        
+        # Notes & References
+        "notes": notes,
+        "chart_image_url": chart_image_url,
+        "tags": tags.split(",") if tags else [],
+        
+        # Accuracy Tracking
+        "expected_completion_date": expected_completion,
+        "expected_price_target": expected_price_target,
+        "is_verified": is_verified,
+        "verification_date": None,
+        "actual_outcome": None
     }
     
     result = await wave_analysis_collection.insert_one(wave_data)
     
     if result.inserted_id:
-        return JSONResponse({"success": True, "message": "Wave analysis saved"})
-    raise HTTPException(status_code=400, detail="Failed to save")
+        # Also save to history for tracking
+        history_entry = {
+            "analysis_id": str(result.inserted_id),
+            "symbol": symbol.upper(),
+            "analysis_date": analysis_date_obj,
+            "primary_wave": primary_wave,
+            "confidence_level": confidence_level,
+            "expected_completion_date": expected_completion,
+            "expected_price_target": expected_price_target,
+            "is_verified": "pending",
+            "created_at": datetime.now()
+        }
+        await wave_history_collection.insert_one(history_entry)
+        
+        return JSONResponse({
+            "success": True,
+            "message": "Advanced wave analysis saved successfully",
+            "analysis_id": str(result.inserted_id)
+        })
+    
+    raise HTTPException(status_code=400, detail="Failed to save analysis")
 
-@app.get("/api/wave-analysis")
-async def get_wave_analysis(
+@app.get("/api/advanced-wave-analysis")
+async def get_advanced_wave_analyses(
     symbol: Optional[str] = None,
     date: Optional[str] = None,
-    wave_number: Optional[str] = None
+    primary_wave: Optional[str] = None,
+    wave_position: Optional[str] = None,
+    confidence_level: Optional[str] = None,
+    is_verified: Optional[str] = None,
+    limit: int = 100
 ):
-    """Get wave analysis with filters"""
+    """Get wave analyses with advanced filters"""
     query = {}
     
     if symbol:
@@ -232,92 +221,115 @@ async def get_wave_analysis(
     if date:
         try:
             filter_date = datetime.strptime(date, "%Y-%m-%d")
-            query["date"] = {
+            query["analysis_date"] = {
                 "$gte": filter_date.replace(hour=0, minute=0, second=0),
                 "$lte": filter_date.replace(hour=23, minute=59, second=59)
             }
         except:
             pass
     
-    if wave_number and wave_number != "all":
-        query["wave_number"] = wave_number
+    if primary_wave:
+        query["primary.wave"] = primary_wave
     
-    analyses = await wave_analysis_collection.find(query).sort("date", -1).to_list(1000)
+    if wave_position:
+        query["wave_position"] = wave_position
+    
+    if confidence_level:
+        query["confidence_level"] = confidence_level
+    
+    if is_verified:
+        query["is_verified"] = is_verified
+    
+    analyses = await wave_analysis_collection.find(query).sort("analysis_date", -1).to_list(limit)
     serialized = [serialize_doc(a) for a in analyses]
     
-    return JSONResponse({"analyses": serialized})
+    return JSONResponse({"analyses": serialized, "count": len(serialized)})
 
-@app.put("/api/wave-analysis/{analysis_id}")
-async def update_wave_analysis(
-    analysis_id: str,
-    symbol: str = Form(...),
-    date: str = Form(...),
-    wave_number: str = Form(...),
-    wave_type: str = Form(...),
-    sub_wave: str = Form(...),
-    notes: str = Form(default=""),
-    trend_direction: str = Form(default="unknown"),
-    confidence_level: str = Form(default="medium"),
-    entry_price: float = Form(default=None),
-    target_price: float = Form(default=None),
-    stop_loss: float = Form(default=None)
-):
-    """Update wave analysis"""
-    try:
-        analysis_date = datetime.strptime(date, "%Y-%m-%d")
-    except:
-        raise HTTPException(status_code=400, detail="Invalid date format")
-    
-    update_data = {
-        "symbol": symbol.upper(),
-        "date": analysis_date,
-        "wave_number": wave_number,
-        "wave_type": wave_type,
-        "sub_wave": sub_wave,
-        "notes": notes,
-        "trend_direction": trend_direction,
-        "confidence_level": confidence_level,
-        "entry_price": entry_price,
-        "target_price": target_price,
-        "stop_loss": stop_loss,
-        "updated_at": datetime.now()
-    }
-    
-    result = await wave_analysis_collection.update_one(
-        {"_id": ObjectId(analysis_id)},
-        {"$set": update_data}
-    )
-    
-    if result.modified_count:
-        return JSONResponse({"success": True, "message": "Wave analysis updated"})
-    raise HTTPException(status_code=404, detail="Analysis not found")
+@app.put("/api/advanced-wave-analysis/{analysis_id}")
+async def update_advanced_wave_analysis(analysis_id: str):
+    """Update specific wave analysis"""
+    # Similar to create but with update
+    pass
 
-@app.delete("/api/wave-analysis/{analysis_id}")
+@app.delete("/api/advanced-wave-analysis/{analysis_id}")
 async def delete_wave_analysis(analysis_id: str):
     """Delete wave analysis"""
     try:
         result = await wave_analysis_collection.delete_one({"_id": ObjectId(analysis_id)})
         if result.deleted_count:
-            return JSONResponse({"success": True, "message": "Wave analysis deleted"})
+            # Also remove from history
+            await wave_history_collection.delete_one({"analysis_id": analysis_id})
+            return JSONResponse({"success": True, "message": "Analysis deleted"})
         raise HTTPException(status_code=404, detail="Analysis not found")
     except:
         raise HTTPException(status_code=400, detail="Invalid ID")
 
-# Get available dates
-@app.get("/api/dates")
-async def get_available_dates():
-    """Get all unique dates from wave analysis"""
-    pipeline = [
-        {"$group": {"_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$date"}}}},
-        {"$sort": {"_id": -1}}
-    ]
-    dates_cursor = wave_analysis_collection.aggregate(pipeline)
-    dates = []
-    async for doc in dates_cursor:
-        if doc["_id"]:
-            dates.append(doc["_id"])
+@app.post("/api/verify-analysis/{analysis_id}")
+async def verify_analysis(
+    analysis_id: str,
+    actual_outcome: str = Form(...),
+    was_correct: bool = Form(...)
+):
+    """Verify if wave analysis was correct"""
+    try:
+        update_data = {
+            "is_verified": "verified",
+            "verification_date": datetime.now(),
+            "actual_outcome": actual_outcome,
+            "was_correct": was_correct
+        }
+        
+        result = await wave_analysis_collection.update_one(
+            {"_id": ObjectId(analysis_id)},
+            {"$set": update_data}
+        )
+        
+        # Update history
+        await wave_history_collection.update_one(
+            {"analysis_id": analysis_id},
+            {"$set": {
+                "is_verified": "verified",
+                "was_correct": was_correct,
+                "verification_date": datetime.now()
+            }}
+        )
+        
+        if result.modified_count:
+            return JSONResponse({"success": True, "message": "Analysis verified"})
+        raise HTTPException(status_code=404, detail="Analysis not found")
+    except:
+        raise HTTPException(status_code=400, detail="Invalid ID")
+
+@app.get("/api/analysis-statistics")
+async def get_analysis_statistics(symbol: Optional[str] = None):
+    """Get statistics about wave analysis accuracy"""
+    query = {}
+    if symbol:
+        query["symbol"] = symbol.upper()
     
-    return JSONResponse({"dates": dates})
+    total = await wave_analysis_collection.count_documents(query)
+    verified = await wave_analysis_collection.count_documents({**query, "is_verified": "verified"})
+    correct = await wave_analysis_collection.count_documents({**query, "was_correct": True})
+    
+    # Wave distribution
+    pipeline = [
+        {"$match": query},
+        {"$group": {
+            "_id": "$primary.wave",
+            "count": {"$sum": 1},
+            "correct": {"$sum": {"$cond": ["$was_correct", 1, 0]}}
+        }}
+    ]
+    
+    wave_stats = await wave_analysis_collection.aggregate(pipeline).to_list(10)
+    
+    return JSONResponse({
+        "total_analyses": total,
+        "verified_analyses": verified,
+        "correct_analyses": correct,
+        "accuracy_rate": (correct / verified * 100) if verified > 0 else 0,
+        "wave_distribution": [serialize_doc(w) for w in wave_stats]
+    })
 
 if __name__ == "__main__":
     import uvicorn
