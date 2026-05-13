@@ -29,10 +29,34 @@ templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 def serialize_doc(doc):
-    if doc:
-        doc["_id"] = str(doc["_id"])
+    """Convert MongoDB document to JSON serializable format"""
+    if doc is None:
+        return None
+    
+    if isinstance(doc, datetime):
+        return doc.isoformat()
+    
+    if isinstance(doc, ObjectId):
+        return str(doc)
+    
+    if isinstance(doc, dict):
+        serialized = {}
+        for key, value in doc.items():
+            if key == "_id":
+                serialized[key] = str(value)
+            elif isinstance(value, datetime):
+                serialized[key] = value.isoformat()
+            elif isinstance(value, ObjectId):
+                serialized[key] = str(value)
+            elif isinstance(value, dict):
+                serialized[key] = serialize_doc(value)
+            elif isinstance(value, list):
+                serialized[key] = [serialize_doc(item) for item in value]
+            else:
+                serialized[key] = value
+        return serialized
+    
     return doc
-
 # ==================== PAGE ROUTES ====================
 
 @app.get("/", response_class=HTMLResponse)
@@ -65,40 +89,6 @@ async def health_check():
 
 # ==================== STOCK CRUD ====================
 
-@app.post("/api/stocks")
-async def create_stock(request: Request):
-    """Add new stock entry"""
-    try:
-        form_data = await request.form()
-        
-        date_str = form_data.get("date", "")
-        if date_str:
-            try:
-                stock_date = datetime.strptime(date_str, "%Y-%m-%d")
-            except:
-                stock_date = datetime.now()
-        else:
-            stock_date = datetime.now()
-        
-        stock_data = {
-            "symbol": form_data.get("symbol", "").upper(),
-            "buy_price": float(form_data.get("buy_price", 0)),
-            "quantity": int(form_data.get("quantity", 0)),
-            "date": stock_date,
-            "created_at": datetime.now()
-        }
-        
-        result = await stocks_collection.insert_one(stock_data)
-        
-        if result.inserted_id:
-            return JSONResponse({"success": True, "message": "Stock added successfully"})
-        raise HTTPException(status_code=400, detail="Failed to add stock")
-        
-    except Exception as e:
-        print(f"ERROR creating stock: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 @app.get("/api/stocks")
 async def get_stocks(date: Optional[str] = None, search: Optional[str] = None):
     """Get stocks with optional filters"""
@@ -119,7 +109,15 @@ async def get_stocks(date: Optional[str] = None, search: Optional[str] = None):
             query["symbol"] = {"$regex": search.upper(), "$options": "i"}
         
         stocks = await stocks_collection.find(query).sort("date", -1).to_list(1000)
-        return JSONResponse({"stocks": [serialize_doc(s) for s in stocks]})
+        
+        # Serialize each stock
+        serialized_stocks = []
+        for stock in stocks:
+            serialized_stock = serialize_doc(stock)
+            serialized_stocks.append(serialized_stock)
+        
+        return JSONResponse({"stocks": serialized_stocks})
+        
     except Exception as e:
         print(f"ERROR getting stocks: {e}")
         return JSONResponse({"stocks": [], "error": str(e)})
