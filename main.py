@@ -89,12 +89,76 @@ async def health_check():
 
 # ==================== STOCK CRUD ====================
 
+# ==================== STOCK CRUD ====================
+
+@app.post("/api/stocks")
+async def create_stock(request: Request):
+    """Add new stock entry"""
+    try:
+        form_data = await request.form()
+        
+        symbol = form_data.get("symbol", "").strip()
+        buy_price = form_data.get("buy_price", "0")
+        quantity = form_data.get("quantity", "0")
+        date_str = form_data.get("date", "")
+        
+        # Validation
+        if not symbol:
+            return JSONResponse({"success": False, "message": "Symbol is required"}, status_code=400)
+        
+        # Date handle
+        if date_str:
+            try:
+                stock_date = datetime.strptime(date_str, "%Y-%m-%d")
+            except:
+                stock_date = datetime.now()
+        else:
+            stock_date = datetime.now()
+        
+        # Price & Quantity handle
+        try:
+            buy_price = float(buy_price)
+        except:
+            buy_price = 0.0
+            
+        try:
+            quantity = int(quantity)
+        except:
+            quantity = 0
+        
+        stock_data = {
+            "symbol": symbol.upper(),
+            "buy_price": buy_price,
+            "quantity": quantity,
+            "date": stock_date,
+            "created_at": datetime.now()
+        }
+        
+        print(f"📝 Saving stock: {stock_data}")
+        
+        result = await stocks_collection.insert_one(stock_data)
+        
+        if result.inserted_id:
+            print(f"✅ Stock saved with ID: {result.inserted_id}")
+            return JSONResponse({
+                "success": True, 
+                "message": "Stock added successfully",
+                "id": str(result.inserted_id)
+            })
+        else:
+            return JSONResponse({"success": False, "message": "Failed to add stock"}, status_code=400)
+        
+    except Exception as e:
+        print(f"❌ ERROR creating stock: {e}")
+        return JSONResponse({"success": False, "message": str(e)}, status_code=500)
+
+
 @app.get("/api/stocks")
 async def get_stocks(date: Optional[str] = None, search: Optional[str] = None):
     """Get stocks with optional filters"""
     try:
         query = {}
-        
+
         if date:
             try:
                 filter_date = datetime.strptime(date, "%Y-%m-%d")
@@ -104,24 +168,23 @@ async def get_stocks(date: Optional[str] = None, search: Optional[str] = None):
                 }
             except:
                 pass
-        
+
         if search:
             query["symbol"] = {"$regex": search.upper(), "$options": "i"}
-        
+
         stocks = await stocks_collection.find(query).sort("date", -1).to_list(1000)
-        
+
         # Serialize each stock
         serialized_stocks = []
         for stock in stocks:
             serialized_stock = serialize_doc(stock)
             serialized_stocks.append(serialized_stock)
-        
+
         return JSONResponse({"stocks": serialized_stocks})
-        
+
     except Exception as e:
         print(f"ERROR getting stocks: {e}")
         return JSONResponse({"stocks": [], "error": str(e)})
-
 
 @app.get("/api/stocks/{stock_id}")
 async def get_stock(stock_id: str):
