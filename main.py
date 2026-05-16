@@ -10,9 +10,6 @@ from typing import Optional
 
 app = FastAPI(title="Stock Manager with Elliott Wave")
 
-@app.get('/sw.js')
-async def service_worker():
-    return FileResponse('static/sw.js', media_type='application/javascript')
 
 MONGODB_URL = os.getenv("MONGODB_URL")
 if not MONGODB_URL:
@@ -71,6 +68,11 @@ async def wave_analysis_page(request: Request):
     return templates.TemplateResponse("wave_analysis.html", {"request": request})
 
 # ==================== HEALTH CHECK ====================
+@app.get('/sw.js')
+async def service_worker():
+    return FileResponse('static/sw.js', media_type='application/javascript')
+
+
 @app.head("/api/health")
 @app.get("/api/health")
 async def health_check():
