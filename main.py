@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, Form, HTTPException
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -9,6 +9,10 @@ import os
 from typing import Optional
 
 app = FastAPI(title="Stock Manager with Elliott Wave")
+
+@app.get('/sw.js')
+async def service_worker():
+    return FileResponse('static/sw.js', media_type='application/javascript')
 
 MONGODB_URL = os.getenv("MONGODB_URL")
 if not MONGODB_URL:
