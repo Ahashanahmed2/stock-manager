@@ -10,7 +10,6 @@ from typing import Optional
 
 app = FastAPI(title="Stock Manager with Elliott Wave")
 
-
 MONGODB_URL = os.getenv("MONGODB_URL")
 if not MONGODB_URL:
     print("⚠️ WARNING: MONGODB_URL not set!")
@@ -72,7 +71,6 @@ async def wave_analysis_page(request: Request):
 async def service_worker():
     return FileResponse('static/sw.js', media_type='application/javascript')
 
-
 @app.head("/api/health")
 @app.get("/api/health")
 async def health_check():
@@ -91,7 +89,7 @@ async def create_stock(request: Request):
         symbol = form_data.get("symbol", "").strip()
         if not symbol:
             return JSONResponse({"success": False, "message": "Symbol is required"}, status_code=400)
-        
+
         date_str = form_data.get("date", "")
         if date_str:
             try:
@@ -100,7 +98,7 @@ async def create_stock(request: Request):
                 stock_date = datetime.now()
         else:
             stock_date = datetime.now()
-        
+
         try:
             buy_price = float(form_data.get("buy_price", 0))
         except:
@@ -109,7 +107,7 @@ async def create_stock(request: Request):
             quantity = int(form_data.get("quantity", 0))
         except:
             quantity = 0
-        
+
         stock_data = {
             "symbol": symbol.upper(),
             "buy_price": buy_price,
@@ -117,7 +115,7 @@ async def create_stock(request: Request):
             "date": stock_date,
             "created_at": datetime.now()
         }
-        
+
         result = await stocks_collection.insert_one(stock_data)
         if result.inserted_id:
             return JSONResponse({"success": True, "message": "Stock added", "id": str(result.inserted_id)})
@@ -137,7 +135,7 @@ async def get_stocks(date: Optional[str] = None, search: Optional[str] = None):
                 pass
         if search:
             query["symbol"] = {"$regex": search.upper(), "$options": "i"}
-        
+
         stocks = await stocks_collection.find(query).sort("date", -1).to_list(1000)
         return JSONResponse({"stocks": [serialize_doc(s) for s in stocks]})
     except Exception as e:
@@ -205,7 +203,7 @@ async def save_wave_analysis(request: Request):
                 analysis_date = datetime.now()
         else:
             analysis_date = datetime.now()
-        
+
         entry_price = form_data.get("entry_price", "")
         if entry_price and str(entry_price).strip():
             try:
@@ -214,7 +212,7 @@ async def save_wave_analysis(request: Request):
                 entry_price = None
         else:
             entry_price = None
-        
+
         wave_data = {
             "symbol": form_data.get("symbol", "").upper(),
             "analysis_date": analysis_date,
@@ -267,7 +265,7 @@ async def save_wave_analysis(request: Request):
             "is_verified": "pending",
             "was_correct": None
         }
-        
+
         result = await wave_analysis_collection.insert_one(wave_data)
         if result.inserted_id:
             return JSONResponse({"success": True, "message": "Wave analysis saved", "analysis_id": str(result.inserted_id)})
@@ -275,7 +273,6 @@ async def save_wave_analysis(request: Request):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# ⭐⭐⭐ THIS IS THE MISSING API - ADD THIS ⭐⭐⭐
 @app.get("/api/advanced-wave-analysis")
 async def get_wave_analyses(
     symbol: Optional[str] = None,
@@ -298,14 +295,75 @@ async def get_wave_analyses(
                 pass
         if primary_wave and primary_wave != "all":
             query["main_wave.wave_number"] = primary_wave
-        
+
         analyses = await wave_analysis_collection.find(query).sort("analysis_date", -1).to_list(100)
         serialized = [serialize_doc(a) for a in analyses]
         return JSONResponse({"analyses": serialized, "count": len(serialized)})
     except Exception as e:
         return JSONResponse({"analyses": [], "count": 0, "error": str(e)})
-# ⭐⭐⭐ END OF MISSING API ⭐⭐⭐
 
+# ==================== GET SINGLE WAVE ANALYSIS ====================
+@app.get("/api/advanced-wave-analysis/{analysis_id}")
+async def get_wave_analysis(analysis_id: str):
+    try:
+        analysis = await wave_analysis_collection.find_one({"_id": ObjectId(analysis_id)})
+        if analysis:
+            return JSONResponse({"analysis": serialize_doc(analysis)})
+        raise HTTPException(status_code=404, detail="Not found")
+    except:
+        raise HTTPException(status_code=400, detail="Invalid ID")
+
+# ==================== UPDATE WAVE ANALYSIS ====================
+@app.put("/api/advanced-wave-analysis/{analysis_id}")
+async def update_wave_analysis(analysis_id: str, request: Request):
+    try:
+        existing = await wave_analysis_collection.find_one({"_id": ObjectId(analysis_id)})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Analysis not found")
+        
+        form_data = await request.form()
+        date_str = form_data.get("analysis_date", "") or form_data.get("date", "")
+        if date_str:
+            try:
+                analysis_date = datetime.strptime(date_str, "%Y-%m-%d")
+            except:
+                analysis_date = datetime.now()
+        else:
+            analysis_date = existing.get("analysis_date", datetime.now())
+        
+        update_data = {
+            "symbol": form_data.get("symbol", existing.get("symbol")).upper(),
+            "analysis_date": analysis_date,
+            "timeframe": form_data.get("timeframe", existing.get("timeframe", "daily")),
+            "confidence_level": form_data.get("confidence_level", existing.get("confidence_level", "medium")),
+            "trend_direction": form_data.get("trend_direction", existing.get("trend_direction", "unknown")),
+            "entry_price": form_data.get("entry_price", existing.get("entry_price")),
+            "notes": form_data.get("notes", existing.get("notes", "")),
+            "updated_at": datetime.now()
+        }
+        
+        # Update nested fields if provided
+        if form_data.get("main_wave_number") or form_data.get("main_wave_type") or form_data.get("main_pattern") or form_data.get("main_wave_position"):
+            update_data["main_wave"] = {
+                "wave_number": form_data.get("main_wave_number", existing.get("main_wave", {}).get("wave_number", "unknown")),
+                "wave_type": form_data.get("main_wave_type", existing.get("main_wave", {}).get("wave_type", "unknown")),
+                "pattern": form_data.get("main_pattern", existing.get("main_wave", {}).get("pattern", "unknown")),
+                "position": form_data.get("main_wave_position", existing.get("main_wave", {}).get("position", "unknown"))
+            }
+        
+        result = await wave_analysis_collection.update_one(
+            {"_id": ObjectId(analysis_id)}, 
+            {"$set": update_data}
+        )
+        
+        if result.modified_count:
+            return JSONResponse({"success": True, "message": "Analysis updated"})
+        return JSONResponse({"success": False, "message": "No changes made"})
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== DELETE WAVE ANALYSIS ====================
 @app.delete("/api/advanced-wave-analysis/{analysis_id}")
 async def delete_wave_analysis(analysis_id: str):
     try:
