@@ -20,15 +20,8 @@
         .sub-wave-box.wave-c { border-left: 4px solid #0d6efd; }
         .sub-wave-box.wave-1 { border-left: 4px solid #198754; }
         .sub-wave-box.wave-3 { border-left: 4px solid #0dcaf0; }
-        .select-sm {
-            font-size: 0.85rem;
-            padding: 4px 8px;
-        }
-        .label-sm {
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
+        .select-sm { font-size: 0.85rem; padding: 4px 8px; }
+        .label-sm { font-size: 0.8rem; font-weight: 600; margin-bottom: 2px; }
     </style>
 </head>
 <body>
@@ -53,7 +46,7 @@
         </ul>
 
         <div class="tab-content">
-            <!-- Add Analysis Tab -->
+            <!-- ==================== ADD ANALYSIS TAB ==================== -->
             <div class="tab-pane fade show active" id="addAnalysis">
                 <div class="card">
                     <div class="card-header bg-primary text-white">
@@ -151,13 +144,13 @@
                                 </div>
                             </div>
 
-                            <!-- SUB-WAVE a -->
-                            <div class="sub-wave-box wave-a" id="subWaveA_box">
+                            <!-- SUB-WAVE A -->
+                            <div class="sub-wave-box wave-a">
                                 <strong>📌 Sub-Wave A / Wave 1 (if impulse)</strong>
                                 <div class="row mt-2">
                                     <div class="col-md-3">
                                         <label class="label-sm">Type</label>
-                                        <select class="form-control select-sm" name="sub_a_type" id="subAType">
+                                        <select class="form-control select-sm" name="sub_a_type">
                                             <option value="unknown">❓ Unknown</option>
                                             <option value="impulse_5">Impulse (5 waves)</option>
                                             <option value="diagonal">Diagonal</option>
@@ -193,7 +186,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label class="label-sm">Detail</label>
-                                        <select class="form-control select-sm" name="sub_a_detail" id="subADetail">
+                                        <select class="form-control select-sm" name="sub_a_detail">
                                             <option value="unknown">❓ Unknown</option>
                                             <option value="i">Minute i</option>
                                             <option value="ii">Minute ii</option>
@@ -205,8 +198,8 @@
                                 </div>
                             </div>
 
-                            <!-- SUB-WAVE b -->
-                            <div class="sub-wave-box wave-b" id="subWaveB_box">
+                            <!-- SUB-WAVE B -->
+                            <div class="sub-wave-box wave-b">
                                 <strong>📌 Sub-Wave B / Wave 2 (if impulse)</strong>
                                 <div class="row mt-2">
                                     <div class="col-md-3">
@@ -250,7 +243,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label class="label-sm">Inner Detail</label>
-                                        <select class="form-control select-sm" name="sub_b_detail" id="subBDetail">
+                                        <select class="form-control select-sm" name="sub_b_detail">
                                             <option value="unknown">❓ Unknown</option>
                                             <option value="a">Inner a</option>
                                             <option value="b">Inner b</option>
@@ -258,8 +251,6 @@
                                         </select>
                                     </div>
                                 </div>
-                                
-                                <!-- If B is running, show current sub-wave detail -->
                                 <div id="bWaveDetail" style="display: none;" class="mt-2 p-2 bg-light rounded">
                                     <small class="text-muted">B Wave Internal Structure:</small>
                                     <div class="row">
@@ -285,13 +276,13 @@
                                 </div>
                             </div>
 
-                            <!-- SUB-WAVE c -->
-                            <div class="sub-wave-box wave-c" id="subWaveC_box">
+                            <!-- SUB-WAVE C -->
+                            <div class="sub-wave-box wave-c">
                                 <strong>📌 Sub-Wave C / Wave 3 (if impulse)</strong>
                                 <div class="row mt-2">
                                     <div class="col-md-3">
                                         <label class="label-sm">Type</label>
-                                        <select class="form-control select-sm" name="sub_c_type" id="subCType">
+                                        <select class="form-control select-sm" name="sub_c_type">
                                             <option value="unknown">❓ Unknown</option>
                                             <option value="impulse_5">Impulse (5 waves)</option>
                                             <option value="ending_diagonal">Ending Diagonal (3-3-3-3-3)</option>
@@ -326,7 +317,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label class="label-sm">Detail</label>
-                                        <select class="form-control select-sm" name="sub_c_detail" id="subCDetail">
+                                        <select class="form-control select-sm" name="sub_c_detail">
                                             <option value="unknown">❓ Unknown</option>
                                             <option value="i">Minute i</option>
                                             <option value="ii">Minute ii</option>
@@ -338,7 +329,7 @@
                                 </div>
                             </div>
 
-                            <!-- SUB-WAVE 4 & 5 (for impulse) -->
+                            <!-- Wave 4 & 5 (for impulse) -->
                             <div id="impulseExtras" style="display: none;">
                                 <div class="sub-wave-box wave-b mt-2">
                                     <strong>📌 Wave 4</strong>
@@ -379,8 +370,8 @@
                                             <select class="form-control select-sm" name="wave_5_type">
                                                 <option value="unknown">❓ Unknown</option>
                                                 <option value="impulse">Impulse</option>
-                                                <option value="ending_diagonal">Ending Diagonal (3-3-3-3-3)</option>
-                                                <option value="leading_diagonal">Leading Diagonal (5-3-5-3-5)</option>
+                                                <option value="ending_diagonal">Ending Diagonal</option>
+                                                <option value="leading_diagonal">Leading Diagonal</option>
                                             </select>
                                         </div>
                                         <div class="col-md-4">
@@ -418,18 +409,18 @@
                 </div>
             </div>
 
-            <!-- View Analysis Tab -->
+            <!-- ==================== VIEW ALL ANALYSIS TAB ==================== -->
             <div class="tab-pane fade" id="viewAnalysis">
                 <div class="card">
                     <div class="card-header bg-info text-white">
                         <div class="row">
-                            <div class="col-md-4">
-                                <input type="date" class="form-control" id="filterDate">
+                            <div class="col-md-3">
+                                <input type="date" class="form-control" id="filterDate" placeholder="Filter by date">
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <input type="text" class="form-control" id="searchSymbol" placeholder="Search symbol...">
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <select class="form-control" id="filterWave">
                                     <option value="all">All Waves</option>
                                     <option value="1">Wave 1</option>
@@ -442,6 +433,9 @@
                                     <option value="C">Wave C</option>
                                 </select>
                             </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-light btn-sm w-100" onclick="loadAnalyses()">🔄 Refresh</button>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -449,19 +443,23 @@
                             <table class="table table-bordered table-hover">
                                 <thead class="table-dark">
                                     <tr>
+                                        <th>#</th>
                                         <th>Date</th>
                                         <th>Symbol</th>
-                                        <th>Main Wave</th>
+                                        <th>Wave</th>
                                         <th>Type</th>
+                                        <th>Pattern</th>
                                         <th>Sub A</th>
                                         <th>Sub B</th>
                                         <th>Sub C</th>
                                         <th>Trend</th>
-                                        <th>Confidence</th>
+                                        <th>Conf</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="analysisTableBody"></tbody>
+                                <tbody id="analysisTableBody">
+                                    <tr><td colspan="12" class="text-center text-muted">Loading analyses...</td></tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -470,52 +468,37 @@
         </div>
     </div>
 
-    <!-- Edit Modal -->
-    <div class="modal fade" id="editWaveModal">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">✏️ Edit Wave Analysis</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="editFormContent">
-                    <!-- Edit form will be loaded here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Set today's date
         document.getElementById('analysisDate').value = new Date().toISOString().split('T')[0];
 
-        // Show/hide B wave detail based on status
+        // Show/hide B wave detail
         document.getElementById('subBStatus').addEventListener('change', function() {
-            const bDetail = document.getElementById('bWaveDetail');
-            if (this.value === 'running') {
-                bDetail.style.display = 'block';
-            } else {
-                bDetail.style.display = 'none';
-            }
+            document.getElementById('bWaveDetail').style.display = this.value === 'running' ? 'block' : 'none';
         });
 
         // Show/hide wave 4 & 5 for impulse
         document.getElementById('mainWaveType').addEventListener('change', function() {
-            const impulseExtras = document.getElementById('impulseExtras');
-            if (this.value === 'impulse' || this.value === 'leading_diagonal') {
-                impulseExtras.style.display = 'block';
-            } else {
-                impulseExtras.style.display = 'none';
-            }
+            document.getElementById('impulseExtras').style.display = (this.value === 'impulse' || this.value === 'leading_diagonal') ? 'block' : 'none';
         });
 
-        // Dynamic B wave current options based on B type
+        // Auto-select pattern
+        document.getElementById('mainWaveType').addEventListener('change', function() {
+            const type = this.value;
+            const pattern = document.getElementById('mainPattern');
+            if (type === 'impulse' || type === 'leading_diagonal') pattern.value = '5-3-5-3-5';
+            else if (type === 'ending_diagonal') pattern.value = '3-3-3-3-3';
+            else if (type === 'zigzag') pattern.value = '5-3-5';
+            else if (type === 'flat') pattern.value = '3-3-5';
+            else if (type === 'triangle') pattern.value = '3-3-3-3-3';
+        });
+
+        // Dynamic B wave options
         document.getElementById('subBType').addEventListener('change', function() {
             const bCurrent = document.getElementById('subBCurrent');
             const type = this.value;
-            
             bCurrent.innerHTML = '<option value="unknown">❓ Unknown</option>';
-            
             if (type === 'zigzag' || type === 'double_zigzag') {
                 bCurrent.innerHTML += `
                     <option value="a_of_b">a of B (5 waves)</option>
@@ -544,11 +527,10 @@
             }
         });
 
-        // Submit form
+        // ==================== SAVE ANALYSIS ====================
         document.getElementById('waveForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
-            
             try {
                 const response = await fetch('/api/advanced-wave-analysis', {
                     method: 'POST',
@@ -560,6 +542,8 @@
                     e.target.reset();
                     document.getElementById('analysisDate').value = new Date().toISOString().split('T')[0];
                     loadAnalyses();
+                } else {
+                    alert('❌ Failed: ' + (data.message || 'Unknown error'));
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -567,71 +551,106 @@
             }
         });
 
-        // Load analyses
+        // ==================== LOAD ANALYSES ====================
         async function loadAnalyses() {
             const date = document.getElementById('filterDate').value;
             const symbol = document.getElementById('searchSymbol').value;
             const wave = document.getElementById('filterWave').value;
-            
+
             let url = '/api/advanced-wave-analysis?';
             if (date) url += `date=${date}&`;
-            if (symbol) url += `symbol=${symbol}&`;
+            if (symbol) url += `symbol=${encodeURIComponent(symbol)}&`;
             if (wave !== 'all') url += `primary_wave=${wave}`;
-            
+
+            const tbody = document.getElementById('analysisTableBody');
+            tbody.innerHTML = '<tr><td colspan="12" class="text-center">Loading...</td></tr>';
+
             try {
                 const response = await fetch(url);
                 const data = await response.json();
                 
-                const tbody = document.getElementById('analysisTableBody');
+                console.log('📊 Data received:', data); // Debug
+
                 tbody.innerHTML = '';
-                
+
+                if (!data.analyses || data.analyses.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="12" class="text-center text-muted">No analyses found. Add one first!</td></tr>';
+                    return;
+                }
+
                 data.analyses.forEach((a, i) => {
                     const row = tbody.insertRow();
-                    const confBadge = a.confidence_level === 'high' ? 'success' : 
-                                     a.confidence_level === 'medium' ? 'warning' : 'danger';
+                    const confBadge = a.confidence_level === 'high' ? 'success' : a.confidence_level === 'medium' ? 'warning' : 'danger';
                     
+                    // Sub-wave data with fallback
+                    const subA = a.sub_wave_a || {};
+                    const subB = a.sub_wave_b || {};
+                    const subC = a.sub_wave_c || {};
+                    const mainWave = a.main_wave || {};
+
                     row.innerHTML = `
-                        <td>${new Date(a.analysis_date).toLocaleDateString()}</td>
+                        <td>${i + 1}</td>
+                        <td>${new Date(a.analysis_date).toLocaleDateString('en-IN')}</td>
                         <td><strong>${a.symbol}</strong></td>
-                        <td><span class="badge bg-primary">Wave ${a.primary?.wave || '-'}</span></td>
-                        <td>${a.primary?.type || '-'}</td>
-                        <td><small>${a.primary?.subwave_detail || '-'}</small></td>
-                        <td><small>${a.intermediate?.wave || '-'}</small></td>
-                        <td><small>${a.minor?.wave || '-'}</small></td>
-                        <td>${a.trend_direction || '-'}</td>
+                        <td><span class="badge bg-primary">Wave ${mainWave.wave_number || '?'}</span></td>
+                        <td><small>${(mainWave.wave_type || '?').replace(/_/g, ' ')}</small></td>
+                        <td><code>${mainWave.pattern || '?'}</code></td>
+                        <td>
+                            <small>${subA.status || '?'}: ${subA.type || '?'}</small><br>
+                            <small class="text-muted">@${subA.current || subA.current_subwave || '?'}</small>
+                        </td>
+                        <td>
+                            <small>${subB.status || '?'}: ${subB.type || '?'}</small><br>
+                            <small class="text-muted">@${subB.current || subB.current_position || '?'}</small>
+                        </td>
+                        <td>
+                            <small>${subC.status || '?'}: ${subC.type || '?'}</small><br>
+                            <small class="text-muted">@${subC.current || subC.current_subwave || '?'}</small>
+                        </td>
+                        <td>${a.trend_direction === 'bullish' ? '🟢' : a.trend_direction === 'bearish' ? '🔴' : '🟡'}</td>
                         <td><span class="badge bg-${confBadge}">${a.confidence_level}</span></td>
                         <td>
-                            <button class="btn btn-sm btn-warning" onclick="editAnalysis('${a._id}')">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteAnalysis('${a._id}')">
+                            <button class="btn btn-sm btn-danger" onclick="deleteAnalysis('${a._id}')" title="Delete">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
                     `;
                 });
+                
+                console.log('✅ Table loaded with', data.analyses.length, 'rows');
+                
             } catch (error) {
-                console.error('Error:', error);
+                console.error('❌ Error loading:', error);
+                tbody.innerHTML = '<tr><td colspan="12" class="text-center text-danger">Error loading data</td></tr>';
             }
         }
 
-        // Delete analysis
+        // ==================== DELETE ANALYSIS ====================
         async function deleteAnalysis(id) {
             if (confirm('Delete this wave analysis?')) {
                 try {
-                    await fetch(`/api/advanced-wave-analysis/${id}`, { method: 'DELETE' });
-                    loadAnalyses();
+                    const response = await fetch(`/api/advanced-wave-analysis/${id}`, { method: 'DELETE' });
+                    const data = await response.json();
+                    if (data.success) {
+                        loadAnalyses();
+                    }
                 } catch (error) {
                     console.error('Error:', error);
                 }
             }
         }
 
-        // Filter events
+        // ==================== FILTER EVENTS ====================
         document.getElementById('filterDate').addEventListener('change', loadAnalyses);
         document.getElementById('searchSymbol').addEventListener('input', loadAnalyses);
         document.getElementById('filterWave').addEventListener('change', loadAnalyses);
 
+        // Load analyses when View tab is clicked
+        document.querySelector('a[href="#viewAnalysis"]').addEventListener('click', function() {
+            loadAnalyses();
+        });
+
+        // Initial load
         loadAnalyses();
     </script>
 </body>
