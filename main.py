@@ -257,7 +257,13 @@ async def save_wave_analysis(request: Request):
     try:
         form_data = await request.form()
         
-        date_str = form_data.get("date", "")
+        # Debug: print all received data
+        print("📥 Received form data:")
+        for key, value in form_data.items():
+            print(f"   {key}: {value}")
+        
+        # FIX: use "analysis_date" to match HTML form
+        date_str = form_data.get("analysis_date", "") or form_data.get("date", "")
         if date_str:
             try:
                 analysis_date = datetime.strptime(date_str, "%Y-%m-%d")
@@ -278,38 +284,49 @@ async def save_wave_analysis(request: Request):
         wave_data = {
             "symbol": form_data.get("symbol", "").upper(),
             "analysis_date": analysis_date,
+            "timeframe": form_data.get("timeframe", "daily"),
             "confidence_level": form_data.get("confidence_level", "medium"),
             "trend_direction": form_data.get("trend_direction", "unknown"),
             "entry_price": entry_price,
+            
+            # Main Wave Structure
             "main_wave": {
                 "wave_number": form_data.get("main_wave_number", "unknown"),
                 "wave_type": form_data.get("main_wave_type", "unknown"),
                 "pattern": form_data.get("main_pattern", "unknown"),
                 "position": form_data.get("main_wave_position", "unknown")
             },
+            
+            # Sub Wave A
             "sub_wave_a": {
-                "type": form_data.get("sub_a_type", "unknown"),
-                "running": form_data.get("sub_a_running", "no"),
                 "status": form_data.get("sub_a_status", "running"),
-                "current_subwave": form_data.get("sub_a_current", "unknown"),
+                "type": form_data.get("sub_a_type", "unknown"),
+                "current": form_data.get("sub_a_current", "unknown"),
+                "running": form_data.get("sub_a_running", "no"),
                 "detail": form_data.get("sub_a_detail", "unknown")
             },
+            
+            # Sub Wave B
             "sub_wave_b": {
-                "type": form_data.get("sub_b_type", "unknown"),
-                "running": form_data.get("sub_b_running", "no"),
                 "status": form_data.get("sub_b_status", "running"),
-                "current_position": form_data.get("sub_b_current", "unknown"),
+                "type": form_data.get("sub_b_type", "unknown"),
+                "current": form_data.get("sub_b_current", "unknown"),
+                "running": form_data.get("sub_b_running", "no"),
                 "detail": form_data.get("sub_b_detail", "unknown"),
                 "internal_type": form_data.get("sub_b_internal_type", "unknown"),
                 "terminal_type": form_data.get("sub_b_terminal_type", "none")
             },
+            
+            # Sub Wave C
             "sub_wave_c": {
-                "type": form_data.get("sub_c_type", "unknown"),
-                "terminal": form_data.get("sub_c_terminal", "no"),
                 "status": form_data.get("sub_c_status", "running"),
-                "current_subwave": form_data.get("sub_c_current", "unknown"),
+                "type": form_data.get("sub_c_type", "unknown"),
+                "current": form_data.get("sub_c_current", "unknown"),
+                "terminal": form_data.get("sub_c_terminal", "no"),
                 "detail": form_data.get("sub_c_detail", "unknown")
             },
+            
+            # Wave 4 & 5
             "wave_4": {
                 "type": form_data.get("wave_4_type", "unknown"),
                 "status": form_data.get("wave_4_status", "not_started"),
@@ -320,6 +337,7 @@ async def save_wave_analysis(request: Request):
                 "status": form_data.get("wave_5_status", "not_started"),
                 "current": form_data.get("wave_5_current", "unknown")
             },
+            
             "notes": form_data.get("notes", ""),
             "created_at": datetime.now(),
             "updated_at": datetime.now(),
@@ -327,53 +345,26 @@ async def save_wave_analysis(request: Request):
             "was_correct": None
         }
         
+        print(f"📝 Saving wave data: {wave_data['symbol']} - Wave {wave_data['main_wave']['wave_number']}")
+        
         result = await wave_analysis_collection.insert_one(wave_data)
         
         if result.inserted_id:
+            print(f"✅ Wave analysis saved with ID: {result.inserted_id}")
             return JSONResponse({
                 "success": True,
-                "message": "Wave analysis saved",
+                "message": "Wave analysis saved successfully!",
                 "analysis_id": str(result.inserted_id)
             })
-        raise HTTPException(status_code=400, detail="Failed to save")
-        
+        else:
+            raise HTTPException(status_code=400, detail="Failed to save")
+            
     except Exception as e:
-        print(f"ERROR saving wave analysis: {e}")
+        print(f"❌ ERROR saving wave analysis: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.get("/api/advanced-wave-analysis")
-async def get_wave_analyses(
-    symbol: Optional[str] = None,
-    date: Optional[str] = None,
-    primary_wave: Optional[str] = None
-):
-    try:
-        query = {}
-        
-        if symbol:
-            query["symbol"] = symbol.upper()
-        
-        if date:
-            try:
-                filter_date = datetime.strptime(date, "%Y-%m-%d")
-                query["analysis_date"] = {
-                    "$gte": filter_date.replace(hour=0, minute=0, second=0),
-                    "$lte": filter_date.replace(hour=23, minute=59, second=59)
-                }
-            except:
-                pass
-        
-        if primary_wave and primary_wave != "all":
-            query["main_wave.wave_number"] = primary_wave
-        
-        analyses = await wave_analysis_collection.find(query).sort("analysis_date", -1).to_list(100)
-        serialized = [serialize_doc(a) for a in analyses]
-        
-        return JSONResponse({"analyses": serialized, "count": len(serialized)})
-    except Exception as e:
-        print(f"ERROR getting analyses: {e}")
-        return JSONResponse({"analyses": [], "count": 0, "error": str(e)})
+            
 
 
 @app.delete("/api/advanced-wave-analysis/{analysis_id}")
