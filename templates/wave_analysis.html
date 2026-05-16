@@ -16,9 +16,6 @@
             --wave-a: #ec4899;
             --wave-b: #f97316;
             --wave-c: #06b6d4;
-            --impulse: #10b981;
-            --corrective: #f43f5e;
-            --diagonal: #fbbf24;
         }
         
         body {
@@ -32,12 +29,6 @@
             border-radius: 20px;
             box-shadow: 0 25px 50px rgba(0,0,0,0.4);
             border: 1px solid #334155;
-            transition: all 0.3s ease;
-        }
-        
-        .wave-card:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 30px 60px rgba(59,130,246,0.2);
         }
         
         .sub-wave-box {
@@ -45,7 +36,6 @@
             padding: 15px;
             margin: 10px 0;
             position: relative;
-            transition: all 0.3s ease;
         }
         
         .sub-wave-box::before {
@@ -58,16 +48,6 @@
             border-radius: 5px 0 0 5px;
         }
         
-        .sub-wave-box.wave-1 { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); }
-        .sub-wave-box.wave-1::before { background: var(--wave-1); }
-        .sub-wave-box.wave-2 { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); }
-        .sub-wave-box.wave-2::before { background: var(--wave-2); }
-        .sub-wave-box.wave-3 { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); }
-        .sub-wave-box.wave-3::before { background: var(--wave-3); }
-        .sub-wave-box.wave-4 { background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); }
-        .sub-wave-box.wave-4::before { background: var(--wave-4); }
-        .sub-wave-box.wave-5 { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); }
-        .sub-wave-box.wave-5::before { background: var(--wave-5); }
         .sub-wave-box.wave-a { background: rgba(236,72,153,0.1); border: 1px solid rgba(236,72,153,0.3); }
         .sub-wave-box.wave-a::before { background: var(--wave-a); }
         .sub-wave-box.wave-b { background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.3); }
@@ -75,17 +55,14 @@
         .sub-wave-box.wave-c { background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.3); }
         .sub-wave-box.wave-c::before { background: var(--wave-c); }
         
-        /* Wave Visualization */
         .wave-visual {
             background: #0f172a;
             border-radius: 15px;
             padding: 20px;
-            margin: 10px 0;
             font-family: 'Courier New', monospace;
             font-size: 0.8rem;
             line-height: 1.2;
             color: #94a3b8;
-            overflow-x: auto;
             white-space: pre;
             border: 1px solid #334155;
         }
@@ -97,7 +74,6 @@
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
         
         .badge-impulse { background: #065f46; color: #6ee7b7; }
@@ -113,7 +89,6 @@
             padding: 10px 20px;
             border-radius: 10px;
             display: inline-block;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         
         .wave-label.w1 { background: var(--wave-1); color: white; }
@@ -124,18 +99,6 @@
         .wave-label.wa { background: var(--wave-a); color: white; }
         .wave-label.wb { background: var(--wave-b); color: white; }
         .wave-label.wc { background: var(--wave-c); color: white; }
-        
-        .progress-wave {
-            height: 8px;
-            border-radius: 10px;
-            background: #334155;
-            margin: 5px 0;
-        }
-        
-        .progress-wave .progress-bar {
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
         
         .summary-item {
             display: flex;
@@ -160,9 +123,7 @@
             box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
         }
         
-        .form-label, .label-sm {
-            color: #94a3b8;
-        }
+        .label-sm { color: #94a3b8; }
         
         .btn-gradient {
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
@@ -171,7 +132,6 @@
             font-weight: 700;
             padding: 12px 30px;
             border-radius: 10px;
-            transition: all 0.3s ease;
         }
         
         .btn-gradient:hover {
@@ -186,6 +146,39 @@
             border-bottom: 3px solid #3b82f6;
             padding-bottom: 8px;
             display: inline-block;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 10px 10px 0 0;
+            margin-right: 5px;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: #1e293b;
+            color: #3b82f6 !important;
+            border-bottom: 3px solid #3b82f6;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            color: #3b82f6 !important;
+        }
+
+        .table-dark {
+            --bs-table-bg: transparent;
+            --bs-table-color: #e2e8f0;
+            border-color: #334155;
+        }
+        
+        .table-dark td, .table-dark th {
+            border-color: #334155;
+            vertical-align: middle;
+        }
+        
+        .table-dark tbody tr:hover {
+            background: rgba(59,130,246,0.1);
         }
     </style>
 </head>
@@ -203,399 +196,444 @@
             </div>
         </nav>
 
-        <div class="row g-4">
-            <!-- LEFT: Analysis Form -->
-            <div class="col-lg-7">
-                <div class="wave-card">
-                    <div class="card-body p-4">
-                        <h4 class="section-title mb-4">📝 New Wave Analysis</h4>
-                        
-                        <form id="waveForm">
-                            <!-- Basic Info Row -->
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-3">
-                                    <label class="label-sm">📌 Symbol *</label>
-                                    <input type="text" class="form-control" name="symbol" required placeholder="AAPL">
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="label-sm">📅 Date *</label>
-                                    <input type="date" class="form-control" name="analysis_date" id="analysisDate" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="label-sm">⏰ Timeframe</label>
-                                    <select class="form-select" name="timeframe">
-                                        <option value="15min">15 Minute</option>
-                                        <option value="30min">30 Minute</option>
-                                        <option value="45min">45 Minute</option>
-                                        <option value="1hour">1 Hour</option>
-                                        <option value="2hour">2 Hour</option>
-                                        <option value="4hour">4 Hour</option>
-                                        <option value="daily" selected>Daily</option>
-                                        <option value="weekly">Weekly</option>
-                                        <option value="monthly">Monthly</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="label-sm">🎯 Confidence</label>
-                                    <select class="form-select" name="confidence_level">
-                                        <option value="high">🟢 High</option>
-                                        <option value="medium" selected>🟡 Medium</option>
-                                        <option value="low">🔴 Low</option>
-                                    </select>
-                                </div>
-                            </div>
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-4" id="waveTabs" style="border-bottom: 2px solid #334155;">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#newAnalysis" style="color: #3b82f6;">
+                    📝 New Analysis
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#viewAnalyses" style="color: #94a3b8;">
+                    📊 View All Analyses
+                </a>
+            </li>
+        </ul>
 
-                            <!-- MAIN WAVE SELECTION -->
-                            <div class="card mb-4" style="background: #0f172a; border: 1px solid #334155;">
-                                <div class="card-header" style="background: #1e293b; border-bottom: 1px solid #334155;">
-                                    <strong>🔷 MAIN WAVE IDENTIFICATION</strong>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row g-3">
+        <div class="tab-content">
+            <!-- ==================== NEW ANALYSIS TAB ==================== -->
+            <div class="tab-pane fade show active" id="newAnalysis">
+                <div class="row g-4">
+                    <!-- LEFT: Analysis Form -->
+                    <div class="col-lg-7">
+                        <div class="wave-card">
+                            <div class="card-body p-4">
+                                <h4 class="section-title mb-4">📝 New Wave Analysis</h4>
+                                
+                                <form id="waveForm">
+                                    <!-- Basic Info Row -->
+                                    <div class="row g-3 mb-4">
                                         <div class="col-md-3">
-                                            <label class="label-sm">Main Wave *</label>
-                                            <select class="form-select" name="main_wave_number" id="mainWaveNumber" required>
-                                                <option value="">-- Select --</option>
-                                                <option value="unknown">❓ Unknown</option>
-                                                <optgroup label="═══ Motive ═══">
-                                                    <option value="1">🟢 Wave 1</option>
-                                                    <option value="3">🔵 Wave 3</option>
-                                                    <option value="5">🔴 Wave 5</option>
-                                                </optgroup>
-                                                <optgroup label="═══ Corrective ═══">
-                                                    <option value="2">🟡 Wave 2</option>
-                                                    <option value="4">🟣 Wave 4</option>
-                                                </optgroup>
-                                                <optgroup label="═══ ABC ═══">
-                                                    <option value="A">💗 Wave A</option>
-                                                    <option value="B">🟠 Wave B</option>
-                                                    <option value="C">🔷 Wave C</option>
-                                                </optgroup>
+                                            <label class="label-sm">📌 Symbol *</label>
+                                            <input type="text" class="form-control" name="symbol" required placeholder="AAPL">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="label-sm">📅 Date *</label>
+                                            <input type="date" class="form-control" name="analysis_date" id="analysisDate" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="label-sm">⏰ Timeframe</label>
+                                            <select class="form-select" name="timeframe">
+                                                <option value="15min">15 Minute</option>
+                                                <option value="30min">30 Minute</option>
+                                                <option value="45min">45 Minute</option>
+                                                <option value="1hour">1 Hour</option>
+                                                <option value="2hour">2 Hour</option>
+                                                <option value="4hour">4 Hour</option>
+                                                <option value="daily" selected>Daily</option>
+                                                <option value="weekly">Weekly</option>
+                                                <option value="monthly">Monthly</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3">
-                                            <label class="label-sm">Wave Type</label>
-                                            <select class="form-select" name="main_wave_type" id="mainWaveType">
-                                                <option value="unknown">❓ Unknown</option>
-                                                <optgroup label="── Motive ──">
-                                                    <option value="impulse">⚡ Impulse (5-3-5-3-5)</option>
-                                                    <option value="leading_diagonal">↗️ Leading Diagonal</option>
-                                                    <option value="ending_diagonal">↘️ Ending Diagonal</option>
-                                                    <option value="extended">📏 Extended Wave</option>
-                                                </optgroup>
-                                                <optgroup label="── Corrective ──">
-                                                    <option value="zigzag">⚡ Zigzag (5-3-5)</option>
-                                                    <option value="flat">📏 Flat (3-3-5)</option>
+                                            <label class="label-sm">🎯 Confidence</label>
+                                            <select class="form-select" name="confidence_level">
+                                                <option value="high">🟢 High</option>
+                                                <option value="medium" selected>🟡 Medium</option>
+                                                <option value="low">🔴 Low</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- MAIN WAVE SELECTION -->
+                                    <div class="card mb-4" style="background: #0f172a; border: 1px solid #334155;">
+                                        <div class="card-header" style="background: #1e293b; border-bottom: 1px solid #334155;">
+                                            <strong>🔷 MAIN WAVE IDENTIFICATION</strong>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row g-3">
+                                                <div class="col-md-3">
+                                                    <label class="label-sm">Main Wave *</label>
+                                                    <select class="form-select" name="main_wave_number" id="mainWaveNumber" required>
+                                                        <option value="">-- Select --</option>
+                                                        <option value="unknown">❓ Unknown</option>
+                                                        <optgroup label="═══ Motive ═══">
+                                                            <option value="1">🟢 Wave 1</option>
+                                                            <option value="3">🔵 Wave 3</option>
+                                                            <option value="5">🔴 Wave 5</option>
+                                                        </optgroup>
+                                                        <optgroup label="═══ Corrective ═══">
+                                                            <option value="2">🟡 Wave 2</option>
+                                                            <option value="4">🟣 Wave 4</option>
+                                                        </optgroup>
+                                                        <optgroup label="═══ ABC ═══">
+                                                            <option value="A">💗 Wave A</option>
+                                                            <option value="B">🟠 Wave B</option>
+                                                            <option value="C">🔷 Wave C</option>
+                                                        </optgroup>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="label-sm">Wave Type</label>
+                                                    <select class="form-select" name="main_wave_type" id="mainWaveType">
+                                                        <option value="unknown">❓ Unknown</option>
+                                                        <optgroup label="── Motive ──">
+                                                            <option value="impulse">⚡ Impulse (5-3-5-3-5)</option>
+                                                            <option value="leading_diagonal">↗️ Leading Diagonal</option>
+                                                            <option value="ending_diagonal">↘️ Ending Diagonal</option>
+                                                            <option value="extended">📏 Extended Wave</option>
+                                                        </optgroup>
+                                                        <optgroup label="── Corrective ──">
+                                                            <option value="zigzag">⚡ Zigzag (5-3-5)</option>
+                                                            <option value="flat">📏 Flat (3-3-5)</option>
+                                                            <option value="irregular_flat">🔄 Irregular Flat</option>
+                                                            <option value="running_flat">🏃 Running Flat</option>
+                                                            <option value="triangle">🔺 Triangle</option>
+                                                            <option value="double_zigzag">⚡⚡ Double Zigzag</option>
+                                                            <option value="triple_zigzag">⚡⚡⚡ Triple Zigzag</option>
+                                                            <option value="combination">🔀 Combination</option>
+                                                        </optgroup>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="label-sm">Pattern</label>
+                                                    <select class="form-select" name="main_pattern" id="mainPattern">
+                                                        <option value="unknown">❓</option>
+                                                        <option value="5-3-5-3-5">5-3-5-3-5</option>
+                                                        <option value="3-3-3-3-3">3-3-3-3-3</option>
+                                                        <option value="5-3-5">5-3-5</option>
+                                                        <option value="3-3-5">3-3-5</option>
+                                                        <option value="w-x-y">W-X-Y</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="label-sm">Position</label>
+                                                    <select class="form-select" name="main_wave_position">
+                                                        <option value="unknown">❓ Unknown</option>
+                                                        <option value="beginning">🌅 Start</option>
+                                                        <option value="middle">☀️ Middle</option>
+                                                        <option value="ending">🌇 End</option>
+                                                        <option value="completed">✅ Done</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="label-sm">Trend</label>
+                                                    <select class="form-select" name="trend_direction">
+                                                        <option value="unknown">❓</option>
+                                                        <option value="bullish">🟢 Bull</option>
+                                                        <option value="bearish">🔴 Bear</option>
+                                                        <option value="sideways">🟡 Side</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- SUB-WAVE A -->
+                                    <div class="sub-wave-box wave-a" id="boxSubA">
+                                        <h6 class="fw-bold">📌 <span id="labelA">Sub-Wave A / Wave 1</span></h6>
+                                        <div class="row g-2">
+                                            <div class="col-md-2">
+                                                <label class="label-sm">Status</label>
+                                                <select class="form-select form-select-sm" name="sub_a_status">
+                                                    <option value="completed">✅ Done</option>
+                                                    <option value="running" selected>🔄 Active</option>
+                                                    <option value="not_started">⏳ Pending</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="label-sm">Type</label>
+                                                <select class="form-select form-select-sm" name="sub_a_type">
+                                                    <option value="unknown">❓ Unknown</option>
+                                                    <option value="impulse_5">Impulse (5)</option>
+                                                    <option value="leading_diagonal">Leading Diagonal</option>
+                                                    <option value="ending_diagonal">Ending Diagonal</option>
+                                                    <option value="zigzag">Zigzag</option>
+                                                    <option value="flat">Flat</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="label-sm">Current</label>
+                                                <select class="form-select form-select-sm" name="sub_a_current">
+                                                    <option value="unknown">❓</option>
+                                                    <option value="1_of_A">1 of A</option>
+                                                    <option value="2_of_A">2 of A</option>
+                                                    <option value="3_of_A">3 of A</option>
+                                                    <option value="4_of_A">4 of A</option>
+                                                    <option value="5_of_A">5 of A</option>
+                                                    <option value="a_of_A">a of A</option>
+                                                    <option value="b_of_A">b of A</option>
+                                                    <option value="c_of_A">c of A</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="label-sm">Running?</label>
+                                                <select class="form-select form-select-sm" name="sub_a_running">
+                                                    <option value="no">No</option>
+                                                    <option value="yes">🏃 Running</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="label-sm">Detail Level</label>
+                                                <select class="form-select form-select-sm" name="sub_a_detail">
+                                                    <option value="unknown">❓</option>
+                                                    <option value="minute_i">Minute i</option>
+                                                    <option value="minute_ii">Minute ii</option>
+                                                    <option value="minute_iii">Minute iii</option>
+                                                    <option value="minute_iv">Minute iv</option>
+                                                    <option value="minute_v">Minute v</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- SUB-WAVE B -->
+                                    <div class="sub-wave-box wave-b" id="boxSubB">
+                                        <h6 class="fw-bold">📌 <span id="labelB">Sub-Wave B / Wave 2</span></h6>
+                                        <div class="row g-2">
+                                            <div class="col-md-2">
+                                                <label class="label-sm">Status</label>
+                                                <select class="form-select form-select-sm" name="sub_b_status" id="subBStatus">
+                                                    <option value="completed">✅ Done</option>
+                                                    <option value="running" selected>🔄 Active</option>
+                                                    <option value="not_started">⏳ Pending</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="label-sm">Type</label>
+                                                <select class="form-select form-select-sm" name="sub_b_type" id="subBType">
+                                                    <option value="unknown">❓ Unknown</option>
+                                                    <option value="zigzag">⚡ Zigzag</option>
+                                                    <option value="flat">📏 Flat</option>
                                                     <option value="irregular_flat">🔄 Irregular Flat</option>
                                                     <option value="running_flat">🏃 Running Flat</option>
                                                     <option value="triangle">🔺 Triangle</option>
                                                     <option value="double_zigzag">⚡⚡ Double Zigzag</option>
-                                                    <option value="triple_zigzag">⚡⚡⚡ Triple Zigzag</option>
                                                     <option value="combination">🔀 Combination</option>
-                                                </optgroup>
-                                            </select>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="label-sm">Current</label>
+                                                <select class="form-select form-select-sm" name="sub_b_current" id="subBCurrent">
+                                                    <option value="unknown">❓</option>
+                                                    <option value="a_of_B">a of B</option>
+                                                    <option value="b_of_B">b of B</option>
+                                                    <option value="c_of_B">c of B</option>
+                                                    <option value="1_of_aB">1 of a of B</option>
+                                                    <option value="2_of_aB">2 of a of B</option>
+                                                    <option value="3_of_aB">3 of a of B</option>
+                                                    <option value="a_of_bB">a of b of B</option>
+                                                    <option value="b_of_bB">b of b of B</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="label-sm">Running?</label>
+                                                <select class="form-select form-select-sm" name="sub_b_running">
+                                                    <option value="no">No</option>
+                                                    <option value="yes">🏃 Running</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="label-sm">Internal Detail</label>
+                                                <select class="form-select form-select-sm" name="sub_b_detail" id="subBDetail">
+                                                    <option value="unknown">❓</option>
+                                                    <option value="terminal_in_B">Diagonal in B</option>
+                                                    <option value="zigzag_in_B">Zigzag in B</option>
+                                                    <option value="flat_in_B">Flat in B</option>
+                                                    <option value="triangle_in_B">Triangle in B</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="col-md-2">
-                                            <label class="label-sm">Pattern</label>
-                                            <select class="form-select" name="main_pattern" id="mainPattern">
-                                                <option value="unknown">❓</option>
-                                                <option value="5-3-5-3-5">5-3-5-3-5</option>
-                                                <option value="3-3-3-3-3">3-3-3-3-3</option>
-                                                <option value="5-3-5">5-3-5</option>
-                                                <option value="3-3-5">3-3-5</option>
-                                                <option value="w-x-y">W-X-Y</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="label-sm">Position</label>
-                                            <select class="form-select" name="main_wave_position">
-                                                <option value="unknown">❓ Unknown</option>
-                                                <option value="beginning">🌅 Start</option>
-                                                <option value="middle">☀️ Middle</option>
-                                                <option value="ending">🌇 End</option>
-                                                <option value="completed">✅ Done</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="label-sm">Trend</label>
-                                            <select class="form-select" name="trend_direction">
-                                                <option value="unknown">❓</option>
-                                                <option value="bullish">🟢 Bull</option>
-                                                <option value="bearish">🔴 Bear</option>
-                                                <option value="sideways">🟡 Side</option>
-                                            </select>
+                                        <!-- B Internal -->
+                                        <div id="bWaveInternal" style="display:none;" class="mt-2 p-2 rounded" style="background: #0f172a;">
+                                            <div class="row g-2">
+                                                <div class="col-md-4">
+                                                    <select class="form-select form-select-sm" name="sub_b_internal_type">
+                                                        <option value="unknown">❓ Internal Type</option>
+                                                        <option value="zigzag">Zigzag</option>
+                                                        <option value="flat">Flat</option>
+                                                        <option value="triangle">Triangle</option>
+                                                        <option value="terminal">Terminal</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <select class="form-select form-select-sm" name="sub_b_terminal_type">
+                                                        <option value="none">Not Terminal</option>
+                                                        <option value="ending_diagonal">Ending Diag (3-3-3-3-3)</option>
+                                                        <option value="leading_diagonal">Leading Diag (5-3-5-3-5)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    <!-- SUB-WAVE C -->
+                                    <div class="sub-wave-box wave-c" id="boxSubC">
+                                        <h6 class="fw-bold">📌 <span id="labelC">Sub-Wave C / Wave 3</span></h6>
+                                        <div class="row g-2">
+                                            <div class="col-md-2">
+                                                <label class="label-sm">Status</label>
+                                                <select class="form-select form-select-sm" name="sub_c_status">
+                                                    <option value="completed">✅ Done</option>
+                                                    <option value="running" selected>🔄 Active</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="label-sm">Type</label>
+                                                <select class="form-select form-select-sm" name="sub_c_type">
+                                                    <option value="unknown">❓</option>
+                                                    <option value="impulse_5">Impulse</option>
+                                                    <option value="ending_diagonal">Ending Diag</option>
+                                                    <option value="extended">Extended</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="label-sm">Current</label>
+                                                <select class="form-select form-select-sm" name="sub_c_current">
+                                                    <option value="unknown">❓</option>
+                                                    <option value="1_of_C">1 of C</option>
+                                                    <option value="2_of_C">2 of C</option>
+                                                    <option value="3_of_C">3 of C</option>
+                                                    <option value="4_of_C">4 of C</option>
+                                                    <option value="5_of_C">5 of C</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="label-sm">Terminal?</label>
+                                                <select class="form-select form-select-sm" name="sub_c_terminal">
+                                                    <option value="no">No</option>
+                                                    <option value="ending">Ending Diag</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="label-sm">Detail</label>
+                                                <select class="form-select form-select-sm" name="sub_c_detail">
+                                                    <option value="unknown">❓</option>
+                                                    <option value="minute_i">Minute i</option>
+                                                    <option value="minute_ii">Minute ii</option>
+                                                    <option value="minute_iii">Minute iii</option>
+                                                    <option value="minute_iv">Minute iv</option>
+                                                    <option value="minute_v">Minute v</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Notes -->
+                                    <div class="mt-3">
+                                        <label class="label-sm">📝 Analysis Notes</label>
+                                        <textarea class="form-control" name="notes" rows="3" placeholder="Key observations, Fibonacci levels, invalidation points..."></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-gradient btn-lg w-100 mt-3">
+                                        💾 Save Wave Analysis
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Visualization & Summary -->
+                    <div class="col-lg-5">
+                        <div class="wave-card mb-4">
+                            <div class="card-body p-4">
+                                <h5 class="section-title mb-3">👁️ Live Wave Visualization</h5>
+                                <div class="wave-visual" id="waveVisual">
+                                    <span style="color:#64748b;">Select wave details...</span>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <span id="waveLabelDisplay"></span>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- SUB-WAVE A -->
-                            <div class="sub-wave-box wave-a" id="boxSubA">
-                                <h6 class="fw-bold">📌 <span id="labelA">Sub-Wave A / Wave 1</span></h6>
-                                <div class="row g-2">
-                                    <div class="col-md-2">
-                                        <label class="label-sm">Status</label>
-                                        <select class="form-select form-select-sm" name="sub_a_status">
-                                            <option value="completed">✅ Done</option>
-                                            <option value="running" selected>🔄 Active</option>
-                                            <option value="not_started">⏳ Pending</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="label-sm">Type</label>
-                                        <select class="form-select form-select-sm" name="sub_a_type">
-                                            <option value="unknown">❓ Unknown</option>
-                                            <option value="impulse_5">Impulse (5)</option>
-                                            <option value="leading_diagonal">Leading Diagonal</option>
-                                            <option value="ending_diagonal">Ending Diagonal</option>
-                                            <option value="zigzag">Zigzag</option>
-                                            <option value="flat">Flat</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="label-sm">Current</label>
-                                        <select class="form-select form-select-sm" name="sub_a_current">
-                                            <option value="unknown">❓</option>
-                                            <option value="1_of_A">1 of A</option>
-                                            <option value="2_of_A">2 of A</option>
-                                            <option value="3_of_A">3 of A</option>
-                                            <option value="4_of_A">4 of A</option>
-                                            <option value="5_of_A">5 of A</option>
-                                            <option value="a_of_A">a of A</option>
-                                            <option value="b_of_A">b of A</option>
-                                            <option value="c_of_A">c of A</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="label-sm">Running?</label>
-                                        <select class="form-select form-select-sm" name="sub_a_running">
-                                            <option value="no">No</option>
-                                            <option value="yes">🏃 Running</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="label-sm">Detail Level</label>
-                                        <select class="form-select form-select-sm" name="sub_a_detail">
-                                            <option value="unknown">❓</option>
-                                            <option value="minute_i">Minute i</option>
-                                            <option value="minute_ii">Minute ii</option>
-                                            <option value="minute_iii">Minute iii</option>
-                                            <option value="minute_iv">Minute iv</option>
-                                            <option value="minute_v">Minute v</option>
-                                        </select>
-                                    </div>
+                        <div class="wave-card mb-4">
+                            <div class="card-body p-4">
+                                <h5 class="section-title mb-3">📋 Quick Summary</h5>
+                                <div id="quickSummary">
+                                    <div class="summary-item"><span>📌 Symbol</span><strong id="sumSymbol">--</strong></div>
+                                    <div class="summary-item"><span>🌊 Wave</span><strong id="sumWave">--</strong></div>
+                                    <div class="summary-item"><span>📐 Type</span><span id="sumType" class="wave-badge">--</span></div>
+                                    <div class="summary-item"><span>📏 Pattern</span><strong id="sumPattern">--</strong></div>
+                                    <div class="summary-item"><span>📍 Position</span><strong id="sumPosition">--</strong></div>
+                                    <div class="summary-item"><span>🎯 Confidence</span><strong id="sumConfidence">--</strong></div>
+                                    <div class="summary-item"><span>📈 Trend</span><strong id="sumTrend">--</strong></div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- SUB-WAVE B -->
-                            <div class="sub-wave-box wave-b" id="boxSubB">
-                                <h6 class="fw-bold">📌 <span id="labelB">Sub-Wave B / Wave 2</span></h6>
-                                <div class="row g-2">
-                                    <div class="col-md-2">
-                                        <label class="label-sm">Status</label>
-                                        <select class="form-select form-select-sm" name="sub_b_status" id="subBStatus">
-                                            <option value="completed">✅ Done</option>
-                                            <option value="running" selected>🔄 Active</option>
-                                            <option value="not_started">⏳ Pending</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="label-sm">Type</label>
-                                        <select class="form-select form-select-sm" name="sub_b_type" id="subBType">
-                                            <option value="unknown">❓ Unknown</option>
-                                            <option value="zigzag">⚡ Zigzag</option>
-                                            <option value="flat">📏 Flat</option>
-                                            <option value="irregular_flat">🔄 Irregular Flat</option>
-                                            <option value="running_flat">🏃 Running Flat</option>
-                                            <option value="triangle">🔺 Triangle</option>
-                                            <option value="double_zigzag">⚡⚡ Double Zigzag</option>
-                                            <option value="combination">🔀 Combination</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="label-sm">Current</label>
-                                        <select class="form-select form-select-sm" name="sub_b_current" id="subBCurrent">
-                                            <option value="unknown">❓</option>
-                                            <option value="a_of_B">a of B</option>
-                                            <option value="b_of_B">b of B</option>
-                                            <option value="c_of_B">c of B</option>
-                                            <option value="1_of_aB">1 of a of B</option>
-                                            <option value="2_of_aB">2 of a of B</option>
-                                            <option value="3_of_aB">3 of a of B</option>
-                                            <option value="a_of_bB">a of b of B</option>
-                                            <option value="b_of_bB">b of b of B</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="label-sm">Running?</label>
-                                        <select class="form-select form-select-sm" name="sub_b_running">
-                                            <option value="no">No</option>
-                                            <option value="yes">🏃 Running</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="label-sm">Internal Detail</label>
-                                        <select class="form-select form-select-sm" name="sub_b_detail" id="subBDetail">
-                                            <option value="unknown">❓</option>
-                                            <option value="terminal_in_B">Diagonal in B</option>
-                                            <option value="zigzag_in_B">Zigzag in B</option>
-                                            <option value="flat_in_B">Flat in B</option>
-                                            <option value="triangle_in_B">Triangle in B</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- B Internal -->
-                                <div id="bWaveInternal" style="display:none;" class="mt-2 p-2 rounded" style="background: #0f172a;">
-                                    <div class="row g-2">
-                                        <div class="col-md-4">
-                                            <select class="form-select form-select-sm" name="sub_b_internal_type">
-                                                <option value="unknown">❓ Internal Type</option>
-                                                <option value="zigzag">Zigzag</option>
-                                                <option value="flat">Flat</option>
-                                                <option value="triangle">Triangle</option>
-                                                <option value="terminal">Terminal</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <select class="form-select form-select-sm" name="sub_b_terminal_type">
-                                                <option value="none">Not Terminal</option>
-                                                <option value="ending_diagonal">Ending Diag (3-3-3-3-3)</option>
-                                                <option value="leading_diagonal">Leading Diag (5-3-5-3-5)</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                        <div class="wave-card">
+                            <div class="card-body p-4">
+                                <h5 class="section-title mb-3">📖 Quick Reference</h5>
+                                <div style="font-size: 0.85rem;">
+                                    <div class="summary-item"><span>⚡ Impulse</span><span class="wave-badge badge-impulse">5-3-5-3-5</span></div>
+                                    <div class="summary-item"><span>⚡ Zigzag</span><span class="wave-badge badge-zigzag">5-3-5</span></div>
+                                    <div class="summary-item"><span>📏 Flat</span><span class="wave-badge badge-flat">3-3-5</span></div>
+                                    <div class="summary-item"><span>🔺 Triangle</span><span class="wave-badge badge-triangle">3-3-3-3-3</span></div>
+                                    <div class="summary-item"><span>↗️ Leading Diag</span><span class="wave-badge badge-diagonal">5-3-5-3-5</span></div>
+                                    <div class="summary-item"><span>↘️ Ending Diag</span><span class="wave-badge badge-diagonal">3-3-3-3-3</span></div>
                                 </div>
                             </div>
-
-                            <!-- SUB-WAVE C -->
-                            <div class="sub-wave-box wave-c" id="boxSubC">
-                                <h6 class="fw-bold">📌 <span id="labelC">Sub-Wave C / Wave 3</span></h6>
-                                <div class="row g-2">
-                                    <div class="col-md-2">
-                                        <label class="label-sm">Status</label>
-                                        <select class="form-select form-select-sm" name="sub_c_status">
-                                            <option value="completed">✅ Done</option>
-                                            <option value="running" selected>🔄 Active</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="label-sm">Type</label>
-                                        <select class="form-select form-select-sm" name="sub_c_type">
-                                            <option value="unknown">❓</option>
-                                            <option value="impulse_5">Impulse</option>
-                                            <option value="ending_diagonal">Ending Diag</option>
-                                            <option value="extended">Extended</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="label-sm">Current</label>
-                                        <select class="form-select form-select-sm" name="sub_c_current">
-                                            <option value="unknown">❓</option>
-                                            <option value="1_of_C">1 of C</option>
-                                            <option value="2_of_C">2 of C</option>
-                                            <option value="3_of_C">3 of C</option>
-                                            <option value="4_of_C">4 of C</option>
-                                            <option value="5_of_C">5 of C</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="label-sm">Terminal?</label>
-                                        <select class="form-select form-select-sm" name="sub_c_terminal">
-                                            <option value="no">No</option>
-                                            <option value="ending">Ending Diag</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="label-sm">Detail</label>
-                                        <select class="form-select form-select-sm" name="sub_c_detail">
-                                            <option value="unknown">❓</option>
-                                            <option value="minute_i">Minute i</option>
-                                            <option value="minute_ii">Minute ii</option>
-                                            <option value="minute_iii">Minute iii</option>
-                                            <option value="minute_iv">Minute iv</option>
-                                            <option value="minute_v">Minute v</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Notes -->
-                            <div class="mt-3">
-                                <label class="label-sm">📝 Analysis Notes</label>
-                                <textarea class="form-control" name="notes" rows="3" placeholder="Key observations, Fibonacci levels, invalidation points..."></textarea>
-                            </div>
-
-                            <button type="submit" class="btn btn-gradient btn-lg w-100 mt-3">
-                                💾 Save Wave Analysis
-                            </button>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT: Visualization & Summary -->
-            <div class="col-lg-5">
-                <!-- Live Wave Visualization -->
-                <div class="wave-card mb-4">
-                    <div class="card-body p-4">
-                        <h5 class="section-title mb-3">👁️ Live Wave Visualization</h5>
-                        <div class="wave-visual" id="waveVisual">
-                            <span style="color:#64748b;">Select wave details to see visualization...</span>
-                        </div>
-                        <div class="text-center mt-2">
-                            <span id="waveLabelDisplay"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Summary -->
-                <div class="wave-card mb-4">
-                    <div class="card-body p-4">
-                        <h5 class="section-title mb-3">📋 Quick Summary</h5>
-                        <div id="quickSummary">
-                            <div class="summary-item">
-                                <span>📌 Symbol</span>
-                                <strong id="sumSymbol">--</strong>
-                            </div>
-                            <div class="summary-item">
-                                <span>🌊 Wave</span>
-                                <strong id="sumWave">--</strong>
-                            </div>
-                            <div class="summary-item">
-                                <span>📐 Type</span>
-                                <span id="sumType" class="wave-badge">--</span>
-                            </div>
-                            <div class="summary-item">
-                                <span>📏 Pattern</span>
-                                <strong id="sumPattern">--</strong>
-                            </div>
-                            <div class="summary-item">
-                                <span>📍 Position</span>
-                                <strong id="sumPosition">--</strong>
-                            </div>
-                            <div class="summary-item">
-                                <span>🎯 Confidence</span>
-                                <strong id="sumConfidence">--</strong>
-                            </div>
-                            <div class="summary-item">
-                                <span>📈 Trend</span>
-                                <strong id="sumTrend">--</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pattern Guide Mini -->
+            <!-- ==================== VIEW ALL ANALYSES TAB ==================== -->
+            <div class="tab-pane fade" id="viewAnalyses">
                 <div class="wave-card">
                     <div class="card-body p-4">
-                        <h5 class="section-title mb-3">📖 Quick Reference</h5>
-                        <div style="font-size: 0.85rem;">
-                            <div class="summary-item"><span>⚡ Impulse</span><span class="wave-badge badge-impulse">5-3-5-3-5</span></div>
-                            <div class="summary-item"><span>⚡ Zigzag</span><span class="wave-badge badge-zigzag">5-3-5</span></div>
-                            <div class="summary-item"><span>📏 Flat</span><span class="wave-badge badge-flat">3-3-5</span></div>
-                            <div class="summary-item"><span>🔺 Triangle</span><span class="wave-badge badge-triangle">3-3-3-3-3</span></div>
-                            <div class="summary-item"><span>↗️ Leading Diag</span><span class="wave-badge badge-diagonal">5-3-5-3-5</span></div>
-                            <div class="summary-item"><span>↘️ Ending Diag</span><span class="wave-badge badge-diagonal">3-3-3-3-3</span></div>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="section-title mb-0">📊 All Wave Analyses</h4>
+                            <div class="d-flex gap-2">
+                                <input type="text" class="form-control" id="searchAnalysis" placeholder="🔍 Search symbol..." style="width: 200px;">
+                                <select class="form-select" id="filterWave" style="width: 130px;">
+                                    <option value="all">All Waves</option>
+                                    <option value="1">Wave 1</option>
+                                    <option value="2">Wave 2</option>
+                                    <option value="3">Wave 3</option>
+                                    <option value="4">Wave 4</option>
+                                    <option value="5">Wave 5</option>
+                                    <option value="A">Wave A</option>
+                                    <option value="B">Wave B</option>
+                                    <option value="C">Wave C</option>
+                                </select>
+                                <button class="btn btn-sm btn-outline-info" onclick="loadAllAnalyses()">
+                                    🔄 Refresh
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Symbol</th>
+                                        <th>Wave</th>
+                                        <th>Type</th>
+                                        <th>Pattern</th>
+                                        <th>Position</th>
+                                        <th>Trend</th>
+                                        <th>Confidence</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="analysisTableBody">
+                                    <tr><td colspan="10" class="text-center text-muted">Loading...</td></tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -605,26 +643,23 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Set today's date
+        // ==================== NEW ANALYSIS FUNCTIONS ====================
+        
         document.getElementById('analysisDate').value = new Date().toISOString().split('T')[0];
 
-        // Auto-select pattern based on type
         document.getElementById('mainWaveType').addEventListener('change', function() {
             const type = this.value;
             const pattern = document.getElementById('mainPattern');
-            
             if (type === 'impulse' || type === 'leading_diagonal') pattern.value = '5-3-5-3-5';
             else if (type === 'ending_diagonal') pattern.value = '3-3-3-3-3';
             else if (type === 'zigzag') pattern.value = '5-3-5';
             else if (type.includes('flat')) pattern.value = '3-3-5';
             else if (type.includes('triangle')) pattern.value = '3-3-3-3-3';
             else if (type === 'double_zigzag') pattern.value = 'w-x-y';
-            
             updateVisualization();
             updateSummary();
         });
 
-        // Update labels on wave change
         document.getElementById('mainWaveNumber').addEventListener('change', function() {
             const wave = this.value;
             document.getElementById('labelA').textContent = ['1','3','5'].includes(wave) ? 'Sub-Wave 1 of '+wave : 'Sub-Wave A';
@@ -634,24 +669,19 @@
             updateSummary();
         });
 
-        // B wave internal toggle
         document.getElementById('subBStatus').addEventListener('change', function() {
             document.getElementById('bWaveInternal').style.display = this.value === 'running' ? 'block' : 'none';
         });
 
-        // Update visualization
         function updateVisualization() {
             const wave = document.getElementById('mainWaveNumber').value;
             const type = document.getElementById('mainWaveType').value;
             const visual = document.getElementById('waveVisual');
             const labelDisplay = document.getElementById('waveLabelDisplay');
-            
-            let art = '';
-            let label = '';
+            let art = '', label = '';
             
             if (['1','3','5'].includes(wave)) {
-                art = `
-    ╱╲      ╱╲      ╱╲
+                art = `    ╱╲      ╱╲      ╱╲
    ╱  ╲    ╱  ╲    ╱  ╲
   ╱    ╲  ╱    ╲  ╱    ╲
  ╱  ①   ╲╱  ③   ╲╱  ⑤   ╲
@@ -662,56 +692,47 @@
               ╲╱      ╲╱`;
                 label = `<span class="wave-label w${wave}">Wave ${wave} - ${type.toUpperCase()}</span>`;
             } else if (['2','4'].includes(wave)) {
-                art = `
-  ╱╲        ╱╲
+                art = `  ╱╲        ╱╲
  ╱  ╲  Ⓑ  ╱  Ⓑ
 ╱ Ⓐ  ╲  ╱  ╲
         ╲╱    ╲
                Ⓒ`;
                 label = `<span class="wave-label w${wave}">Wave ${wave} - CORRECTION</span>`;
             } else if (['A','B','C'].includes(wave)) {
-                art = `
-╱╲
+                art = `╱╲
   ╲  Ⓑ
    ╲
  Ⓐ  ╲
      Ⓒ`;
                 label = `<span class="wave-label w${wave.toLowerCase()}">Wave ${wave}</span>`;
             }
-            
             visual.textContent = art || 'Select wave to see pattern';
             labelDisplay.innerHTML = label;
         }
 
-        // Update summary
         function updateSummary() {
             document.getElementById('sumSymbol').textContent = document.querySelector('[name="symbol"]').value || '--';
             document.getElementById('sumWave').textContent = 'Wave ' + (document.getElementById('mainWaveNumber').value || '--');
-            
             const type = document.getElementById('mainWaveType').value;
             const typeEl = document.getElementById('sumType');
             typeEl.textContent = type.replace(/_/g, ' ').toUpperCase();
-            
             if (['impulse','extended'].includes(type)) typeEl.className = 'wave-badge badge-impulse';
             else if (['zigzag','double_zigzag','triple_zigzag'].includes(type)) typeEl.className = 'wave-badge badge-zigzag';
             else if (type.includes('flat')) typeEl.className = 'wave-badge badge-flat';
             else if (type.includes('triangle')) typeEl.className = 'wave-badge badge-triangle';
             else if (type.includes('diagonal')) typeEl.className = 'wave-badge badge-diagonal';
             else typeEl.className = 'wave-badge badge-corrective';
-            
             document.getElementById('sumPattern').textContent = document.getElementById('mainPattern').value;
             document.getElementById('sumPosition').textContent = document.querySelector('[name="main_wave_position"]').value;
             document.getElementById('sumConfidence').textContent = document.querySelector('[name="confidence_level"]').value;
             document.getElementById('sumTrend').textContent = document.querySelector('[name="trend_direction"]').value;
         }
 
-        // Live update on any change
-        document.querySelectorAll('select, input').forEach(el => {
+        document.querySelectorAll('#newAnalysis select, #newAnalysis input').forEach(el => {
             el.addEventListener('change', () => { updateVisualization(); updateSummary(); });
             el.addEventListener('input', updateSummary);
         });
 
-        // Form submit
         document.getElementById('waveForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
@@ -725,15 +746,92 @@
                     alert('✅ Wave analysis saved!');
                     e.target.reset();
                     document.getElementById('analysisDate').value = new Date().toISOString().split('T')[0];
+                    updateVisualization();
+                    updateSummary();
+                } else {
+                    alert('❌ Failed: ' + (data.message || 'Unknown error'));
                 }
             } catch (error) {
                 alert('❌ Error saving');
             }
         });
 
-        // Initial
         updateVisualization();
         updateSummary();
+
+        // ==================== VIEW ALL ANALYSES FUNCTIONS ====================
+        
+        document.getElementById('searchAnalysis').addEventListener('input', loadAllAnalyses);
+        document.getElementById('filterWave').addEventListener('change', loadAllAnalyses);
+        
+        document.querySelector('a[href="#viewAnalyses"]').addEventListener('click', function() {
+            loadAllAnalyses();
+        });
+
+        async function loadAllAnalyses() {
+            const search = document.getElementById('searchAnalysis').value;
+            const wave = document.getElementById('filterWave').value;
+            
+            let url = '/api/advanced-wave-analysis?';
+            if (search) url += `symbol=${encodeURIComponent(search)}&`;
+            if (wave !== 'all') url += `primary_wave=${wave}`;
+            
+            const tbody = document.getElementById('analysisTableBody');
+            tbody.innerHTML = '<tr><td colspan="10" class="text-center">Loading...</td></tr>';
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                tbody.innerHTML = '';
+                
+                if (!data.analyses || data.analyses.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">No analyses found</td></tr>';
+                    return;
+                }
+                
+                data.analyses.forEach((a, index) => {
+                    const row = tbody.insertRow();
+                    const confColor = a.confidence_level === 'high' ? '#22c55e' : a.confidence_level === 'medium' ? '#f59e0b' : '#ef4444';
+                    const waveNum = a.main_wave?.wave_number || '?';
+                    const waveColors = {'1':'#22c55e','2':'#f59e0b','3':'#3b82f6','4':'#8b5cf6','5':'#ef4444','A':'#ec4899','B':'#f97316','C':'#06b6d4'};
+                    const wColor = waveColors[waveNum] || '#94a3b8';
+                    
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${new Date(a.analysis_date).toLocaleDateString('en-IN')}</td>
+                        <td><strong>${a.symbol}</strong></td>
+                        <td><span class="badge" style="background:${wColor}; color:white;">Wave ${waveNum}</span></td>
+                        <td>${(a.main_wave?.wave_type || '?').replace(/_/g,' ')}</td>
+                        <td><code>${a.main_wave?.pattern || '?'}</code></td>
+                        <td>${a.main_wave?.position || '?'}</td>
+                        <td>${a.trend_direction === 'bullish' ? '🟢' : a.trend_direction === 'bearish' ? '🔴' : '🟡'}</td>
+                        <td><span style="color:${confColor};">●</span> ${a.confidence_level}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteAnalysis('${a._id}')" title="Delete">🗑️</button>
+                        </td>
+                    `;
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                tbody.innerHTML = '<tr><td colspan="10" class="text-center text-danger">Error loading</td></tr>';
+            }
+        }
+
+        async function deleteAnalysis(id) {
+            if (confirm('Delete this wave analysis?')) {
+                try {
+                    const response = await fetch(`/api/advanced-wave-analysis/${id}`, { method: 'DELETE' });
+                    const data = await response.json();
+                    if (data.success) loadAllAnalyses();
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        }
+
+        loadAllAnalyses();
     </script>
 </body>
 </html>
