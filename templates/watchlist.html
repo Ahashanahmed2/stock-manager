@@ -547,7 +547,7 @@ body{background:linear-gradient(135deg,#0f172a,#1e293b)!important;min-height:100
             if (date) url += `date=${date}&`;
             if (sym) url += `symbol=${encodeURIComponent(sym)}&`;
             if (wave !== 'all') url += `primary_wave=${wave}`;
-
+            console.log('🔍 Search URL:', url);
             const tb = document.getElementById('analysisTableBody');
             tb.innerHTML = '<tr><td colspan="15" class="text-center">Loading...</td></tr>';
             try {
