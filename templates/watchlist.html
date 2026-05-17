@@ -23,15 +23,19 @@ body{background:linear-gradient(135deg,#0f172a,#1e293b)!important;min-height:100
 </head>
 <body>
     <div class="container-fluid mt-3">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 rounded">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">📊 Stock Manager</a>
-                <div class="navbar-nav">
-                    <a class="nav-link" href="/">Stocks</a>
-                    <a class="nav-link active" href="/watchlist">Elliott Wave Analysis</a>
-                </div>
-            </div>
-        </nav>
+        <nav class="navbar navbar-expand-lg rounded-3 mb-4" style="background: #0f172a; border: 1px solid #334155;">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="#" style="color: #3b82f6;">🌊 Elliott Wave Analyzer Pro</a>
+        <div class="navbar-nav">
+            <a class="nav-link" href="/" style="color: #94a3b8;">📈 Stocks</a>
+            <a class="nav-link active" href="/wave-analysis" style="color: #3b82f6;">🌊 Wave Analysis</a>
+        </div>
+        <button id="installBtn" onclick="installApp()" 
+                style="display:none; background:#3b82f6; color:white; border:none; padding:8px 15px; border-radius:8px; cursor:pointer;">
+            📲 Install App
+        </button>
+    </div>
+</nav>
 
         <ul class="nav nav-tabs mb-3" id="mainTabs">
             <li class="nav-item">
