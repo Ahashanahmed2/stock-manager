@@ -460,6 +460,7 @@
             if (search) url += `symbol=${encodeURIComponent(search)}&`;
             if (wave !== 'all') url += `primary_wave=${wave}`;
             const tbody = document.getElementById('analysisTableBody');
+            console.log('🔍 Search URL:', url);
             tbody.innerHTML = '<tr><td colspan="15" class="text-center">Loading...</td></tr>';
             try {
                 const r = await fetch(url), d = await r.json();
