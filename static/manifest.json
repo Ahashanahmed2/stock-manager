@@ -2,7 +2,7 @@
   "name": "Elliott Wave Analyzer Pro",
   "short_name": "Wave Pro",
   "description": "Advanced Elliott Wave Analysis Tool",
-  "start_url": "/wave-analysis",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#3b82f6",
