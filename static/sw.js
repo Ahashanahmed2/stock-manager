@@ -4,6 +4,7 @@ const CACHE_NAME = 'wave-app-v1';
 // Files to cache for offline access
 const urlsToCache = [
     '/',
+    '/index',
     '/wave-analysis',
     '/watchlist',
     '/static/style.css',
