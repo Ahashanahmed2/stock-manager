@@ -855,6 +855,11 @@
         if (window.matchMedia('(display-mode: standalone)').matches) {
             console.log('📱 App is running in standalone mode');
         }
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+               navigator.serviceWorker.register('/sw.js');
+            });
+        }
     </script>
 </body>
 </html>
