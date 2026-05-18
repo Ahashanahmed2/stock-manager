@@ -3,28 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock Manager</title>
-    
+    <title>Elliott Wave Analysis Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    <head>
-    <!-- এই লাইনগুলো যোগ করুন -->
+    <!-- PWA Manifest -->
     <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#3b82f6">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Wave Pro">
     <link rel="icon" type="image/svg+xml" href="/static/icon.svg">
+    <link rel="apple-touch-icon" href="/static/icon.svg">
     <link rel="apple-touch-icon" href="/static/icon-192.png">
-</head>
-<style>
-body{background:linear-gradient(135deg,#0f172a,#1e293b)!important;min-height:100vh;color:#e2e8f0!important}
-.navbar{background:#0f172a!important;border:1px solid #334155!important}
-.nav-link{color:#94a3b8!important}.nav-link.active{color:#3b82f6!important}
-.card{background:#1e293b!important;border:1px solid #334155!important;color:#e2e8f0!important}
-.card-header{background:#1e293b!important;border-bottom:1px solid #334155!important}
-.table{color:#e2e8f0!important}.table td,.table th{border-color:#334155!important;color:#e2e8f0!important}
-.form-control,.form-select{background:#0f172a!important;border:1px solid #334155!important;color:#e2e8f0!important}
-.form-label{color:#94a3b8!important}.btn-primary{background:linear-gradient(135deg,#3b82f6,#8b5cf6)!important;border:none!important}
-</style>
+    <style>
+        :root {
+            --wave-1: #22c55e;
+            --wave-2: #f59e0b;
+            --wave-3: #3b82f6;
+            --wave-4: #8b5cf6;
+            --wave-5: #ef4444;
+            --wave-a: #ec4899;
+            --wave-b: #f97316;
+            --wave-c: #06b6d4;
+        }
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+        }
+        .wave-card {
+            background: #1e293b;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            border: 1px solid #334155;
+        }
+        .sub-wave-box {
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px 0;
+            position: relative;
+        }
+        .sub-wave-box::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            border-radius: 5px 0 0 5px;
+        }
+        .sub-wave-box.wave-a { background: rgba(236,72,153,0.1); border: 1px solid rgba(236,72,153,0.3); }
+        .sub-wave-box.wave-a::before { background: var(--wave-a); }
+        .sub-wave-box.wave-b { background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.3); }
+        .sub-wave-box.wave-b::before { background: var(--wave-b); }
+        .sub-wave-box.wave-c { background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.3); }
+        .sub-wave-box.wave-c::before { background: var(--wave-c); }
+        .wave-visual {
+            background: #0f172a;
+            border-radius: 15px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.2;
+            color: #94a3b8;
+            white-space: pre;
+            border: 1px solid #334155;
+        }
+        .wave-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-impulse { background: #065f46; color: #6ee7b7; }
+        .badge-corrective { background: #7f1d1d; color: #fca5a5; }
+        .badge-diagonal { background: #78350f; color: #fcd34d; }
+        .badge-zigzag { background: #4a1d96; color: #c4b5fd; }
+        .badge-flat { background: #1e3a5f; color: #93c5fd; }
+        .badge-triangle { background: #3b0764; color: #d8b4fe; }
+        .wave-label {
+            font-size: 1.5rem;
+            font-weight: 900;
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .wave-label.w1 { background: var(--wave-1); color: white; }
+        .wave-label.w2 { background: var(--wave-2); color: white; }
+        .wave-label.w3 { background: var(--wave-3); color: white; }
+        .wave-label.w4 { background: var(--wave-4); color: white; }
+        .wave-label.w5 { background: var(--wave-5); color: white; }
+        .wave-label.wa { background: var(--wave-a); color: white; }
+        .wave-label.wb { background: var(--wave-b); color: white; }
+        .wave-label.wc { background: var(--wave-c); color: white; }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin: 3px 0;
+            background: #0f172a;
+        }
+        .form-control, .form-select {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+        }
+        .form-control:focus, .form-select:focus {
+            background: #1e293b;
+            border-color: #3b82f6;
+            color: white;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
+        }
+        .label-sm { color: #94a3b8; }
+        .btn-gradient {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 12px 30px;
+            border-radius: 10px;
+        }
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(59,130,246,0.4);
+            color: white;
+        }
+        .section-title {
+            font-weight: 800;
+            color: #e2e8f0;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 8px;
+            display: inline-block;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 10px 10px 0 0;
+            margin-right: 5px;
+        }
+        .nav-tabs .nav-link.active {
+            background: #1e293b;
+            color: #3b82f6 !important;
+            border-bottom: 3px solid #3b82f6;
+        }
+        .nav-tabs .nav-link:hover { color: #3b82f6 !important; }
+        .table-dark {
+            --bs-table-bg: transparent;
+            --bs-table-color: #e2e8f0;
+            border-color: #334155;
+        }
+        .table-dark td, .table-dark th {
+            border-color: #334155;
+            vertical-align: middle;
+            font-size: 0.8rem;
+        }
+        .table-dark tbody tr:hover { background: rgba(59,130,246,0.1); }
+    </style>
 </head>
 <body>
     <div class="container-fluid mt-3">
