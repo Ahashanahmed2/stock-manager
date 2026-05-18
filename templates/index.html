@@ -514,6 +514,35 @@
 
         // Load stocks on page load
         loadStocks();
+        // Install Prompt Handler
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        
+            // Show install button
+            const installBtn = document.getElementById('installBtn');
+            if (installBtn) installBtn.style.display = 'block';
+        });
+
+        // Install Button Click Handler
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('✅ User installed the app');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installBtn').style.display = 'none';
+                });
+            }
+        }
+
+        // Check if already installed
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            console.log('📱 App is running in standalone mode');
+        }
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                navigator.serviceWorker.register('/sw.js');
