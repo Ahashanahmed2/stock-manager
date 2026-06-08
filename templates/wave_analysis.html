@@ -168,18 +168,19 @@
 <body>
     <div class="container-fluid mt-3 mb-5">
         <nav class="navbar navbar-expand-lg rounded-3 mb-4" style="background: #0f172a; border: 1px solid #334155;">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="#" style="color: #3b82f6;">🌊 Elliott Wave Analyzer Pro</a>
-        <div class="navbar-nav">
-            <a class="nav-link" href="/" style="color: #94a3b8;">📈 Stocks</a>
-            <a class="nav-link active" href="/wave-analysis" style="color: #3b82f6;">🌊 Wave Analysis</a>
-        </div>
-        <button id="installBtn" onclick="installApp()" 
-                style="display:none;background:#3b82f6; color:white; border:none; padding:8px 15px; border-radius:8px; cursor:pointer;">
-            📲 Install App
-        </button>
-    </div>
-</nav>
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" href="#" style="color: #3b82f6;">🌊 Elliott Wave Analyzer Pro</a>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/" style="color: #94a3b8;">📈 Stocks</a>
+                    <a class="nav-link" href="/watchlist" style="color: #94a3b8;">📊 Watchlist</a>
+                    <a class="nav-link active" href="/wave-analysis" style="color: #3b82f6;">🌊 Wave Analysis</a>
+                </div>
+                <button id="installBtn" onclick="installApp()" 
+                        style="display:none;background:#3b82f6; color:white; border:none; padding:8px 15px; border-radius:8px; cursor:pointer;">
+                    📲 Install App
+                </button>
+            </div>
+        </nav>
 
         <ul class="nav nav-tabs mb-4" id="waveTabs" style="border-bottom: 2px solid #334155;">
             <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#newAnalysis" style="color: #3b82f6;">📝 New Analysis</a></li>
@@ -311,6 +312,12 @@
                                         <label class="label-sm">📝 Analysis Notes</label>
                                         <textarea class="form-control" name="notes" rows="3" placeholder="Key observations..."></textarea>
                                     </div>
+                                    <div class="row g-2 mt-2">
+                                        <div class="col-md-6">
+                                            <label class="label-sm">💰 Entry Price (Optional)</label>
+                                            <input type="number" step="0.01" class="form-control" name="entry_price" placeholder="Entry price">
+                                        </div>
+                                    </div>
                                     <button type="submit" class="btn btn-gradient btn-lg w-100 mt-3">💾 Save Wave Analysis</button>
                                 </form>
                             </div>
@@ -319,7 +326,7 @@
 
                     <div class="col-lg-5">
                         <div class="wave-card mb-4"><div class="card-body p-4"><h5 class="section-title mb-3">👁️ Live Wave Visualization</h5><div class="wave-visual" id="waveVisual"><span style="color:#64748b;">Select wave details...</span></div><div class="text-center mt-2"><span id="waveLabelDisplay"></span></div></div></div>
-                        <div class="wave-card mb-4"><div class="card-body p-4"><h5 class="section-title mb-3">📋 Quick Summary</h5><div id="quickSummary"><div class="summary-item"><span>📌 Symbol</span><strong id="sumSymbol">--</strong></div><div class="summary-item"><span>🌊 Wave</span><strong id="sumWave">--</strong></div><div class="summary-item"><span>📐 Type</span><span id="sumType" class="wave-badge">--</span></div><div class="summary-item"><span>📏 Pattern</span><strong id="sumPattern">--</strong></div><div class="summary-item"><span>📍 Position</span><strong id="sumPosition">--</strong></div><div class="summary-item"><span>🎯 Confidence</span><strong id="sumConfidence">--</strong></div><div class="summary-item"><span>📈 Trend</span><strong id="sumTrend">--</strong></div></div></div></div>
+                        <div class="wave-card mb-4"><div class="card-body p-4"><h5 class="section-title mb-3">📋 Quick Summary</h5><div id="quickSummary"><div class="summary-item"><span>📌 Symbol</span><strong id="sumSymbol">--</strong></div><div class="summary-item"><span>🌊 Wave</span><strong id="sumWave">--</strong></div><div class="summary-item"><span>📐 Type</span><span id="sumType" class="wave-badge">--</span></div><div class="summary-item"><span>📏 Pattern</span><strong id="sumPattern">--</strong></div><div class="summary-item"><span>📍 Position</span><strong id="sumPosition">--</strong></div><div class="summary-item"><span>🎯 Confidence</span><strong id="sumConfidence">--</strong></div><div class="summary-item"><span>📈 Trend</span><strong id="sumTrend">--</strong></div><div class="summary-item"><span>💰 Entry Price</span><strong id="sumEntry">--</strong></div></div></div></div>
                         <div class="wave-card"><div class="card-body p-4"><h5 class="section-title mb-3">📖 Quick Reference</h5><div style="font-size:0.85rem;"><div class="summary-item"><span>⚡ Impulse</span><span class="wave-badge badge-impulse">5-3-5-3-5</span></div><div class="summary-item"><span>⚡ Zigzag</span><span class="wave-badge badge-zigzag">5-3-5</span></div><div class="summary-item"><span>📏 Flat</span><span class="wave-badge badge-flat">3-3-5</span></div><div class="summary-item"><span>🔺 Triangle</span><span class="wave-badge badge-triangle">3-3-3-3-3</span></div><div class="summary-item"><span>↗️ Leading Diag</span><span class="wave-badge badge-diagonal">5-3-5-3-5</span></div><div class="summary-item"><span>↘️ Ending Diag</span><span class="wave-badge badge-diagonal">3-3-3-3-3</span></div></div></div></div>
                     </div>
                 </div>
@@ -343,11 +350,11 @@
                                     <tr>
                                         <th>#</th><th>Date</th><th>Symbol</th><th>Wave</th><th>Type</th><th>Pattern</th><th>Pos</th>
                                         <th>Sub A</th><th>Sub B</th><th>Sub C</th><th>W4</th><th>W5</th>
-                                        <th>Trend</th><th>Conf</th><th>Actions</th>
+                                        <th>Trend</th><th>Conf</th><th>Entry</th><th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="analysisTableBody">
-                                    <tr><td colspan="15" class="text-center text-muted">Loading...</td></tr>
+                                    <tr><td colspan="16" class="text-center text-muted">Loading...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -424,6 +431,8 @@
             document.getElementById('sumPosition').textContent = document.querySelector('[name="main_wave_position"]').value;
             document.getElementById('sumConfidence').textContent = document.querySelector('[name="confidence_level"]').value;
             document.getElementById('sumTrend').textContent = document.querySelector('[name="trend_direction"]').value;
+            const entryPrice = document.querySelector('[name="entry_price"]').value;
+            document.getElementById('sumEntry').textContent = entryPrice ? `$${entryPrice}` : '--';
         }
 
         document.querySelectorAll('#newAnalysis select, #newAnalysis input').forEach(el => {
@@ -461,12 +470,12 @@
             if (wave !== 'all') url += `primary_wave=${wave}`;
             const tbody = document.getElementById('analysisTableBody');
             console.log('🔍 Search URL:', url);
-            tbody.innerHTML = '<tr><td colspan="15" class="text-center">Loading...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="16" class="text-center">Loading...</td></tr>';
             try {
                 const r = await fetch(url), d = await r.json();
                 tbody.innerHTML = '';
                 if (!d.analyses || d.analyses.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="15" class="text-center text-muted">No analyses found</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="16" class="text-center text-muted">No analyses found</td></tr>';
                     return;
                 }
                 d.analyses.forEach((a, i) => {
@@ -493,13 +502,14 @@
                         <td><small>${w5.status||'?'}:${w5.type||'?'}</small></td>
                         <td>${a.trend_direction==='bullish'?'🟢':a.trend_direction==='bearish'?'🔴':'🟡'}</td>
                         <td><span style="color:${confColor};">●</span> ${a.confidence_level}</td>
+                        <td>${a.entry_price ? `$${a.entry_price}` : '--'}</td>
                         <td>
                             <button class="btn btn-sm btn-outline-warning mb-1" onclick="editAnalysis('${a._id}')" title="Edit">✏️</button>
                             <button class="btn btn-sm btn-outline-danger" onclick="deleteAnalysis('${a._id}')" title="Delete">🗑️</button>
                         </td>
                     `;
                 });
-            } catch (err) { tbody.innerHTML = '<tr><td colspan="15" class="text-center text-danger">Error loading</td></tr>'; }
+            } catch (err) { tbody.innerHTML = '<tr><td colspan="16" class="text-center text-danger">Error loading</td></tr>'; }
         }
 
         async function deleteAnalysis(id) {
@@ -522,6 +532,7 @@
                     fd.append('confidence_level', a.confidence_level); fd.append('trend_direction', a.trend_direction);
                     fd.append('main_wave_number', mw.wave_number); fd.append('main_wave_type', mw.wave_type);
                     fd.append('main_pattern', mw.pattern); fd.append('main_wave_position', mw.position);
+                    fd.append('entry_price', a.entry_price || '');
                     fd.append('sub_a_status', sa.status||'running'); fd.append('sub_a_type', sa.type||'unknown');
                     fd.append('sub_a_current', sa.current||sa.current_subwave||'unknown'); fd.append('sub_a_running', sa.running||'no'); fd.append('sub_a_detail', sa.detail||'unknown');
                     fd.append('sub_b_status', sb.status||'running'); fd.append('sub_b_type', sb.type||'unknown');
@@ -540,7 +551,6 @@
 
         loadAllAnalyses();
 
-    
         // Register Service Worker for PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -559,13 +569,10 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-        
-            // Show install button
             const installBtn = document.getElementById('installBtn');
             if (installBtn) installBtn.style.display = 'block';
         });
 
-        // Install Button Click Handler
         function installApp() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
@@ -579,14 +586,8 @@
             }
         }
 
-        // Check if already installed
         if (window.matchMedia('(display-mode: standalone)').matches) {
             console.log('📱 App is running in standalone mode');
-        }
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-               navigator.serviceWorker.register('/sw.js');
-            });
         }
     </script>
 </body>
