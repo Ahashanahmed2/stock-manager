@@ -50,6 +50,50 @@ def serialize_doc(doc):
         return serialized
     return doc
 
+async def calculate_all_quantity(symbol: str):
+    """Calculate total quantity for a symbol (sum of buys minus sells)"""
+    # Get all transactions for this symbol
+    transactions = await stocks_collection.find({"symbol": symbol.upper()}).to_list(None)
+    
+    total_quantity = 0
+    for t in transactions:
+        transaction_type = t.get("transaction_type", "buy")
+        if transaction_type == "buy":
+            total_quantity += t.get("quantity", 0)
+        elif transaction_type == "sell":
+            total_quantity -= t.get("quantity", 0)
+    
+    return total_quantity
+
+async def get_stocks_with_all_quantity(query=None):
+    """Get stocks with calculated all_quantity field"""
+    if query is None:
+        query = {}
+    
+    stocks = await stocks_collection.find(query).sort("date", -1).to_list(1000)
+    
+    # Calculate all_quantity for each stock
+    for stock in stocks:
+        stock["all_quantity"] = await calculate_all_quantity(stock["symbol"])
+    
+    return stocks
+
+async def get_available_symbols():
+    """Get list of symbols that have available quantity > 0 for selling"""
+    # Get all unique symbols
+    symbols = await stocks_collection.distinct("symbol")
+    
+    available_symbols = []
+    for symbol in symbols:
+        total_qty = await calculate_all_quantity(symbol)
+        if total_qty > 0:
+            available_symbols.append({
+                "symbol": symbol,
+                "available_quantity": total_qty
+            })
+    
+    return available_symbols
+
 # ==================== PAGE ROUTES ====================
 @app.get("/", response_class=HTMLResponse)
 @app.head("/")
@@ -89,7 +133,9 @@ async def create_stock(request: Request):
         symbol = form_data.get("symbol", "").strip()
         if not symbol:
             return JSONResponse({"success": False, "message": "Symbol is required"}, status_code=400)
-
+        
+        transaction_type = form_data.get("transaction_type", "buy").lower()
+        
         date_str = form_data.get("date", "")
         if date_str:
             try:
@@ -98,27 +144,45 @@ async def create_stock(request: Request):
                 stock_date = datetime.now()
         else:
             stock_date = datetime.now()
-
+        
         try:
             buy_price = float(form_data.get("buy_price", 0))
         except:
             buy_price = 0.0
+        
         try:
             quantity = int(form_data.get("quantity", 0))
         except:
             quantity = 0
-
+        
+        # For sell transactions, check if enough quantity is available
+        if transaction_type == "sell":
+            current_total = await calculate_all_quantity(symbol)
+            if quantity > current_total:
+                return JSONResponse({
+                    "success": False, 
+                    "message": f"Insufficient quantity! Available: {current_total}, Requested: {quantity}"
+                }, status_code=400)
+        
         stock_data = {
             "symbol": symbol.upper(),
             "buy_price": buy_price,
             "quantity": quantity,
+            "transaction_type": transaction_type,
             "date": stock_date,
             "created_at": datetime.now()
         }
-
+        
         result = await stocks_collection.insert_one(stock_data)
         if result.inserted_id:
-            return JSONResponse({"success": True, "message": "Stock added", "id": str(result.inserted_id)})
+            # Calculate new total for this symbol
+            new_total = await calculate_all_quantity(symbol)
+            return JSONResponse({
+                "success": True, 
+                "message": f"{transaction_type.upper()} transaction added", 
+                "id": str(result.inserted_id),
+                "all_quantity": new_total
+            })
         return JSONResponse({"success": False, "message": "Failed"}, status_code=400)
     except Exception as e:
         return JSONResponse({"success": False, "message": str(e)}, status_code=500)
@@ -135,17 +199,36 @@ async def get_stocks(date: Optional[str] = None, search: Optional[str] = None):
                 pass
         if search:
             query["symbol"] = {"$regex": search.upper(), "$options": "i"}
-
-        stocks = await stocks_collection.find(query).sort("date", -1).to_list(1000)
+        
+        stocks = await get_stocks_with_all_quantity(query)
         return JSONResponse({"stocks": [serialize_doc(s) for s in stocks]})
     except Exception as e:
         return JSONResponse({"stocks": [], "error": str(e)})
+
+@app.get("/api/stocks/symbols")
+async def get_available_symbols_for_sell():
+    """Get available symbols with their quantities for selling"""
+    try:
+        symbols = await get_available_symbols()
+        return JSONResponse({"symbols": symbols})
+    except Exception as e:
+        return JSONResponse({"symbols": [], "error": str(e)})
+
+@app.get("/api/stocks/available-quantity/{symbol}")
+async def get_available_quantity(symbol: str):
+    """Get available quantity for a symbol"""
+    try:
+        total_qty = await calculate_all_quantity(symbol)
+        return JSONResponse({"symbol": symbol.upper(), "available_quantity": total_qty})
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 @app.get("/api/stocks/{stock_id}")
 async def get_stock(stock_id: str):
     try:
         stock = await stocks_collection.find_one({"_id": ObjectId(stock_id)})
         if stock:
+            stock["all_quantity"] = await calculate_all_quantity(stock["symbol"])
             return JSONResponse({"stock": serialize_doc(stock)})
         raise HTTPException(status_code=404, detail="Not found")
     except:
@@ -155,13 +238,45 @@ async def get_stock(stock_id: str):
 async def update_stock(stock_id: str, request: Request):
     try:
         form_data = await request.form()
+        
+        # Get existing stock to check transaction type
+        existing = await stocks_collection.find_one({"_id": ObjectId(stock_id)})
+        if not existing:
+            raise HTTPException(status_code=404, detail="Stock not found")
+        
+        symbol = form_data.get("symbol", "").upper()
+        quantity = int(form_data.get("quantity", 0))
+        transaction_type = form_data.get("transaction_type", existing.get("transaction_type", "buy")).lower()
+        
+        # For sell updates, validate quantity
+        if transaction_type == "sell":
+            # Calculate total excluding current transaction
+            all_stocks = await stocks_collection.find({"symbol": symbol}).to_list(None)
+            current_qty = existing.get("quantity", 0)
+            total_excluding_current = 0
+            
+            for s in all_stocks:
+                if str(s["_id"]) != stock_id:
+                    if s.get("transaction_type", "buy") == "buy":
+                        total_excluding_current += s.get("quantity", 0)
+                    else:
+                        total_excluding_current -= s.get("quantity", 0)
+            
+            if quantity > total_excluding_current:
+                return JSONResponse({
+                    "success": False,
+                    "message": f"Insufficient quantity for sell! Available: {total_excluding_current}, Requested: {quantity}"
+                }, status_code=400)
+        
         update_data = {
-            "symbol": form_data.get("symbol", "").upper(),
+            "symbol": symbol,
             "buy_price": float(form_data.get("buy_price", 0)),
-            "quantity": int(form_data.get("quantity", 0)),
+            "quantity": quantity,
+            "transaction_type": transaction_type,
             "date": datetime.strptime(form_data.get("date", ""), "%Y-%m-%d"),
             "updated_at": datetime.now()
         }
+        
         result = await stocks_collection.update_one({"_id": ObjectId(stock_id)}, {"$set": update_data})
         if result.modified_count:
             return JSONResponse({"success": True, "message": "Stock updated"})
