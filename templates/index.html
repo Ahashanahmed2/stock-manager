@@ -163,28 +163,63 @@
             font-size: 0.8rem;
         }
         .table-dark tbody tr:hover { background: rgba(59,130,246,0.1); }
+        .badge-buy {
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-sell {
+            background: #dc3545;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .available-qty {
+            font-size: 12px;
+            margin-top: 5px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .available-qty.valid {
+            background: rgba(40,167,69,0.2);
+            color: #90EE90;
+        }
+        .available-qty.invalid {
+            background: rgba(220,53,69,0.2);
+            color: #ff9999;
+        }
+        .total-qty-cell {
+            font-weight: bold;
+            color: #60a5fa;
+        }
     </style>
 </head>
 <body>
     <div class="container-fluid mt-3 mb-5">
         <nav class="navbar navbar-expand-lg rounded-3 mb-4" style="background: #0f172a; border: 1px solid #334155;">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="#" style="color: #3b82f6;">🌊 Elliott Wave Analyzer Pro</a>
-        <div class="navbar-nav">
-            <a class="nav-link" href="/" style="color: #94a3b8;">📈 Stocks</a>
-            <a class="nav-link active" href="/wave-analysis" style="color: #3b82f6;">🌊 Wave Analysis</a>
-        </div>
-        <button id="installBtn" onclick="installApp()" 
-                style="display:none;background:#3b82f6; color:white; border:none; padding:8px 15px; border-radius:8px; cursor:pointer;">
-            📲 Install App
-        </button>
-    </div>
-</nav>
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" href="#" style="color: #3b82f6;">🌊 Elliott Wave Analyzer Pro</a>
+                <div class="navbar-nav">
+                    <a class="nav-link active" href="/" style="color: #3b82f6;">📈 Stocks</a>
+                    <a class="nav-link" href="/watchlist" style="color: #94a3b8;">📊 Watchlist</a>
+                    <a class="nav-link" href="/wave-analysis" style="color: #94a3b8;">🌊 Wave Analysis</a>
+                </div>
+                <button id="installBtn" onclick="installApp()" 
+                        style="display:none;background:#3b82f6; color:white; border:none; padding:8px 15px; border-radius:8px; cursor:pointer;">
+                    📲 Install App
+                </button>
+            </div>
+        </nav>
 
         <!-- Tabs -->
         <ul class="nav nav-tabs mb-3" id="mainTabs">
             <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#addStock">Add Stock</a>
+                <a class="nav-link active" data-bs-toggle="tab" href="#addStock">Add Transaction</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="tab" href="#viewStocks">View Stocks</a>
@@ -195,33 +230,44 @@
         </ul>
 
         <div class="tab-content">
-            <!-- Add Stock Tab -->
+            <!-- Add Transaction Tab -->
             <div class="tab-pane fade show active" id="addStock">
                 <div class="card">
                     <div class="card-header bg-primary text-white">
-                        <h5>Add New Stock</h5>
+                        <h5>➕ Add Transaction (Buy/Sell)</h5>
                     </div>
                     <div class="card-body">
                         <form id="stockForm">
                             <div class="row">
-                                <div class="col-md-3">
-                                    <label class="form-label">Symbol</label>
-                                    <input type="text" class="form-control" name="symbol" required placeholder="AAPL">
+                                <div class="col-md-2">
+                                    <label class="form-label">Transaction Type *</label>
+                                    <select class="form-control" name="transaction_type" id="transactionType" required>
+                                        <option value="buy">🟢 BUY</option>
+                                        <option value="sell">🔴 SELL</option>
+                                    </select>
                                 </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Buy Price</label>
-                                    <input type="number" step="0.01" class="form-control" name="buy_price" required>
+                                <div class="col-md-2">
+                                    <label class="form-label">Symbol *</label>
+                                    <input type="text" class="form-control" name="symbol" id="symbolInput" required placeholder="e.g., LOVELLO">
                                 </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Quantity</label>
-                                    <input type="number" class="form-control" name="quantity" required>
+                                <div class="col-md-2">
+                                    <label class="form-label">Price *</label>
+                                    <input type="number" step="0.01" class="form-control" name="buy_price" id="priceInput" required placeholder="Price">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
+                                    <label class="form-label">Quantity *</label>
+                                    <input type="number" class="form-control" name="quantity" id="quantityInput" required placeholder="Quantity">
+                                </div>
+                                <div class="col-md-2">
                                     <label class="form-label">Date</label>
                                     <input type="date" class="form-control" name="date" id="inputDate">
                                 </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button type="submit" class="btn btn-primary w-100">Add Transaction</button>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary mt-3">Add Stock</button>
+                            <div id="availableQtyMsg" class="available-qty" style="display: none;"></div>
                         </form>
                     </div>
                 </div>
@@ -231,15 +277,18 @@
             <div class="tab-pane fade" id="viewStocks">
                 <div class="card">
                     <div class="card-header bg-info text-white">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h5>Stock List</h5>
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <h5 class="mb-0">📋 Stock Transaction History</h5>
                             </div>
                             <div class="col-md-3">
                                 <input type="date" class="form-control" id="filterDate" placeholder="Filter by date">
                             </div>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" id="searchSymbol" placeholder="Search symbol...">
+                                <input type="text" class="form-control" id="searchSymbol" placeholder="🔍 Search symbol...">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-light btn-sm w-100" onclick="loadStocks()">🔄 Refresh</button>
                             </div>
                         </div>
                     </div>
@@ -251,15 +300,17 @@
                                         <th>No</th>
                                         <th>Date</th>
                                         <th>Symbol</th>
-                                        <th>Buy Price</th>
+                                        <th>Type</th>
+                                        <th>Price</th>
                                         <th>Quantity</th>
+                                        <th>All Quantity</th>
                                         <th>Total</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="stockTableBody">
                                     <tr>
-                                        <td colspan="7" class="text-center">Loading stocks...</td>
+                                        <td colspan="9" class="text-center">Loading stocks...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -272,7 +323,7 @@
             <div class="tab-pane fade" id="deleteAll">
                 <div class="card">
                     <div class="card-header bg-danger text-white">
-                        <h5>Delete All Stocks by Date</h5>
+                        <h5>⚠️ Delete All Stocks by Date</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -282,7 +333,7 @@
                             </div>
                             <div class="col-md-4">
                                 <button class="btn btn-danger mt-4" onclick="deleteAllByDate()">
-                                    Delete All Stocks for this Date
+                                    🗑️ Delete All Stocks for this Date
                                 </button>
                             </div>
                         </div>
@@ -297,18 +348,25 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-warning">
-                    <h5 class="modal-title">Edit Stock</h5>
+                    <h5 class="modal-title">✏️ Edit Transaction</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editForm">
                         <input type="hidden" id="editId">
                         <div class="mb-3">
+                            <label class="form-label">Transaction Type</label>
+                            <select class="form-control" id="editTransactionType" required>
+                                <option value="buy">🟢 BUY</option>
+                                <option value="sell">🔴 SELL</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label">Symbol</label>
                             <input type="text" class="form-control" id="editSymbol" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Buy Price</label>
+                            <label class="form-label">Price</label>
                             <input type="number" step="0.01" class="form-control" id="editPrice" required>
                         </div>
                         <div class="mb-3">
@@ -319,7 +377,7 @@
                             <label class="form-label">Date</label>
                             <input type="date" class="form-control" id="editDate" required>
                         </div>
-                        <button type="submit" class="btn btn-warning">Update Stock</button>
+                        <button type="submit" class="btn btn-warning">Update Transaction</button>
                     </form>
                 </div>
             </div>
@@ -331,10 +389,106 @@
         // Set today's date
         document.getElementById('inputDate').value = new Date().toISOString().split('T')[0];
 
-        // Add Stock
+        let availableSymbols = [];
+
+        // Load available symbols for sell
+        async function loadAvailableSymbols() {
+            try {
+                const response = await fetch('/api/stocks/symbols');
+                const data = await response.json();
+                if (data.symbols) {
+                    availableSymbols = data.symbols;
+                }
+            } catch (error) {
+                console.error('Error loading symbols:', error);
+            }
+        }
+
+        // Check available quantity for sell
+        async function checkAvailableQuantity(symbol, quantity) {
+            try {
+                const response = await fetch(`/api/stocks/available-quantity/${encodeURIComponent(symbol)}`);
+                const data = await response.json();
+                return data.available_quantity || 0;
+            } catch (error) {
+                console.error('Error checking quantity:', error);
+                return 0;
+            }
+        }
+
+        // Transaction type change handler
+        document.getElementById('transactionType').addEventListener('change', function() {
+            const symbolInput = document.getElementById('symbolInput');
+            const availableMsg = document.getElementById('availableQtyMsg');
+            const quantityInput = document.getElementById('quantityInput');
+            
+            if (this.value === 'sell') {
+                symbolInput.placeholder = 'Type symbol to sell...';
+                symbolInput.style.border = '1px solid #dc3545';
+                symbolInput.addEventListener('input', suggestSymbols);
+                loadAvailableSymbols();
+                availableMsg.style.display = 'block';
+                availableMsg.innerHTML = '💡 Type a symbol to see available quantity';
+                availableMsg.className = 'available-qty';
+            } else {
+                symbolInput.placeholder = 'e.g., LOVELLO';
+                symbolInput.style.border = '1px solid #334155';
+                symbolInput.removeEventListener('input', suggestSymbols);
+                availableMsg.style.display = 'none';
+                quantityInput.max = '';
+                quantityInput.placeholder = 'Quantity';
+            }
+        });
+
+        async function suggestSymbols() {
+            const input = document.getElementById('symbolInput');
+            const value = input.value.toUpperCase();
+            const availableMsg = document.getElementById('availableQtyMsg');
+            const quantityInput = document.getElementById('quantityInput');
+            
+            if (value && availableSymbols.length > 0) {
+                const match = availableSymbols.find(s => s.symbol === value);
+                if (match) {
+                    availableMsg.innerHTML = `✅ Available to sell: ${match.available_quantity} shares`;
+                    availableMsg.className = 'available-qty valid';
+                    quantityInput.max = match.available_quantity;
+                    quantityInput.placeholder = `Max ${match.available_quantity}`;
+                } else {
+                    const suggestions = availableSymbols.filter(s => s.symbol.includes(value));
+                    if (suggestions.length > 0) {
+                        availableMsg.innerHTML = `💡 Suggestions: ${suggestions.map(s => `${s.symbol} (${s.available_quantity})`).join(', ')}`;
+                        availableMsg.className = 'available-qty';
+                    } else {
+                        availableMsg.innerHTML = `⚠️ No available quantity for "${value}" to sell`;
+                        availableMsg.className = 'available-qty invalid';
+                        quantityInput.max = 0;
+                    }
+                }
+            } else if (value) {
+                availableMsg.innerHTML = '⏳ Loading available symbols...';
+                await loadAvailableSymbols();
+                suggestSymbols();
+            } else {
+                availableMsg.style.display = 'none';
+            }
+        }
+
+        // Add Transaction (Buy/Sell)
         document.getElementById('stockForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
+            const transactionType = document.getElementById('transactionType').value;
+            const symbol = document.getElementById('symbolInput').value;
+            const quantity = parseInt(document.getElementById('quantityInput').value);
+            
+            // For sell, validate quantity
+            if (transactionType === 'sell') {
+                const available = await checkAvailableQuantity(symbol, quantity);
+                if (quantity > available) {
+                    alert(`❌ Insufficient quantity! Available: ${available}, Requested: ${quantity}`);
+                    return;
+                }
+            }
             
             try {
                 const response = await fetch('/api/stocks', {
@@ -344,12 +498,15 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('✅ Stock added successfully!');
+                    alert(`✅ ${transactionType.toUpperCase()} transaction added successfully!`);
                     e.target.reset();
                     document.getElementById('inputDate').value = new Date().toISOString().split('T')[0];
+                    document.getElementById('transactionType').value = 'buy';
+                    document.getElementById('availableQtyMsg').style.display = 'none';
                     loadStocks();
+                    loadAvailableSymbols();
                 } else {
-                    alert('❌ Failed to add stock');
+                    alert('❌ ' + (data.message || 'Failed to add transaction'));
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -361,7 +518,7 @@
         document.getElementById('filterDate').addEventListener('change', loadStocks);
         document.getElementById('searchSymbol').addEventListener('input', loadStocks);
 
-        // Load Stocks
+        // Load Stocks with All Quantity
         async function loadStocks() {
             const date = document.getElementById('filterDate').value;
             const search = document.getElementById('searchSymbol').value;
@@ -371,7 +528,7 @@
             if (search) url += `search=${encodeURIComponent(search)}`;
             
             const tbody = document.getElementById('stockTableBody');
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center">Loading...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" class="text-center">Loading...</td></tr>';
             
             try {
                 const response = await fetch(url);
@@ -385,7 +542,7 @@
                 tbody.innerHTML = '';
                 
                 if (!data.stocks || data.stocks.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No stocks found</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted">No transactions found</td></tr>';
                     return;
                 }
                 
@@ -393,16 +550,20 @@
                     const row = tbody.insertRow();
                     const total = (stock.buy_price * stock.quantity).toFixed(2);
                     const stockDate = new Date(stock.date).toLocaleDateString();
+                    const transactionType = stock.transaction_type || 'buy';
+                    const allQuantity = stock.all_quantity || 0;
                     
                     row.innerHTML = `
                         <td>${index + 1}</td>
                         <td>${stockDate}</td>
                         <td><strong>${stock.symbol}</strong></td>
-                        <td>$${stock.buy_price}</td>
+                        <td><span class="badge-${transactionType}">${transactionType.toUpperCase()}</span></td>
+                        <td>$${stock.buy_price.toFixed(2)}</td>
                         <td>${stock.quantity}</td>
+                        <td class="total-qty-cell">${allQuantity}</td>
                         <td><strong>$${total}</strong></td>
                         <td>
-                            <button class="btn btn-sm btn-warning" onclick="editStock('${stock._id}')">
+                            <button class="btn btn-sm btn-warning me-1" onclick="editStock('${stock._id}')">
                                 <i class="bi bi-pencil"></i>
                             </button>
                             <button class="btn btn-sm btn-danger" onclick="deleteStock('${stock._id}')">
@@ -414,7 +575,7 @@
                 
             } catch (error) {
                 console.error('Error loading stocks:', error);
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Error: ${error.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center text-danger">Error: ${error.message}</td></tr>`;
             }
         }
 
@@ -430,11 +591,12 @@
                 document.getElementById('editPrice').value = stock.buy_price;
                 document.getElementById('editQuantity').value = stock.quantity;
                 document.getElementById('editDate').value = new Date(stock.date).toISOString().split('T')[0];
+                document.getElementById('editTransactionType').value = stock.transaction_type || 'buy';
                 
                 new bootstrap.Modal(document.getElementById('editModal')).show();
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error loading stock details');
+                alert('Error loading transaction details');
             }
         }
 
@@ -447,6 +609,7 @@
             formData.append('buy_price', document.getElementById('editPrice').value);
             formData.append('quantity', document.getElementById('editQuantity').value);
             formData.append('date', document.getElementById('editDate').value);
+            formData.append('transaction_type', document.getElementById('editTransactionType').value);
             
             try {
                 const response = await fetch(`/api/stocks/${id}`, {
@@ -456,19 +619,22 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('✅ Stock updated!');
+                    alert('✅ Transaction updated!');
                     bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
                     loadStocks();
+                    loadAvailableSymbols();
+                } else {
+                    alert('❌ ' + (data.message || 'Failed to update'));
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error updating stock');
+                alert('Error updating transaction');
             }
         });
 
         // Delete Stock
         async function deleteStock(id) {
-            if (confirm('Are you sure you want to delete this stock?')) {
+            if (confirm('Are you sure you want to delete this transaction?')) {
                 try {
                     const response = await fetch(`/api/stocks/${id}`, {
                         method: 'DELETE'
@@ -476,12 +642,13 @@
                     const data = await response.json();
                     
                     if (data.success) {
-                        alert('🗑️ Stock deleted!');
+                        alert('🗑️ Transaction deleted!');
                         loadStocks();
+                        loadAvailableSymbols();
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Error deleting stock');
+                    alert('Error deleting transaction');
                 }
             }
         }
@@ -494,7 +661,7 @@
                 return;
             }
             
-            if (confirm(`⚠️ Are you sure you want to delete ALL stocks for ${date}?`)) {
+            if (confirm(`⚠️ Are you sure you want to delete ALL transactions for ${date}?`)) {
                 try {
                     const response = await fetch(`/api/stocks/date/${date}`, {
                         method: 'DELETE'
@@ -504,16 +671,19 @@
                     if (data.success) {
                         alert(`✅ ${data.message}`);
                         loadStocks();
+                        loadAvailableSymbols();
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Error deleting stocks');
+                    alert('Error deleting transactions');
                 }
             }
         }
 
-        // Load stocks on page load
+        // Load stocks and symbols on page load
         loadStocks();
+        loadAvailableSymbols();
+        
         // Install Prompt Handler
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
